@@ -8,18 +8,21 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700;900&display=swap');
         
         body {
             font-family: 'Noto Sans', sans-serif;
-            background-color: #f8fafc;
+            transition: background-color 0.3s ease, color 0.3s ease;
             -webkit-tap-highlight-color: transparent;
         }
 
         .glass-card {
-            background: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
         }
 
@@ -28,12 +31,20 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes rotateIn {
+            from { transform: rotate(-90deg) scale(0.5); opacity: 0; }
+            to { transform: rotate(0) scale(1); opacity: 1; }
+        }
+
         .animate-fadeIn {
             animation: fadeIn 0.4s ease-out forwards;
         }
 
+        .theme-icon-animate {
+            animation: rotateIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
         #loading-overlay {
-            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(8px);
         }
 
@@ -46,28 +57,28 @@
         }
     </style>
 </head>
-<body class="antialiased text-gray-800">
+<body class="antialiased text-gray-800 bg-slate-50 dark:bg-slate-950 dark:text-slate-200">
 
-    <div id="loading-overlay" class="fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 opacity-0 pointer-events-none">
+    <div id="loading-overlay" class="fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 opacity-0 pointer-events-none bg-white/90 dark:bg-slate-900/90">
         <div class="flex flex-col items-center gap-4">
             <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-            <p class="text-sm font-bold text-indigo-950 uppercase tracking-widest">Processing...</p>
+            <p class="text-sm font-bold text-indigo-950 dark:text-indigo-400 uppercase tracking-widest">Processing...</p>
         </div>
     </div>
 
-    <div id="lock-screen" class="hidden fixed inset-0 z-[110] flex items-center justify-center bg-white/95 backdrop-blur-md p-4">
-        <div class="bg-white p-8 rounded-[2.5rem] shadow-2xl w-full max-sm border border-gray-200 text-center animate-fadeIn">
+    <div id="lock-screen" class="hidden fixed inset-0 z-[110] flex items-center justify-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-4">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl w-full max-w-sm border border-gray-200 dark:border-slate-700 text-center animate-fadeIn">
             <div class="mb-6">
-                <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                 </div>
-                <h3 class="text-xl font-black text-indigo-950">App Locked</h3>
-                <p class="text-gray-500 text-xs mt-1">Enter your security PIN</p>
+                <h3 class="text-xl font-black text-indigo-950 dark:text-white">App Locked</h3>
+                <p class="text-gray-500 dark:text-slate-400 text-xs mt-1">Enter your security PIN</p>
             </div>
             
             <form id="pin-form" class="space-y-4">
-                <input type="password" id="pin-input" maxlength="4" placeholder="••••" class="w-full text-center text-2xl tracking-[1em] px-4 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500" required autofocus>
-                <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl shadow-lg">Unlock</button>
+                <input type="password" id="pin-input" maxlength="4" placeholder="••••" class="w-full text-center text-2xl tracking-[1em] px-4 py-4 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 dark:text-white" required autofocus>
+                <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-indigo-700 transition-all">Unlock</button>
             </form>
             
             <button id="reset-app" class="mt-6 text-[10px] font-bold text-red-400 uppercase tracking-widest hover:underline">Reset App (Delete Data)</button>
@@ -76,68 +87,95 @@
 
     <div id="main-app" class="max-w-7xl mx-auto px-4 py-8">
         <header class="mb-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
-            <div>
-                <h1 class="text-4xl font-black text-indigo-950 mb-4">Fin <span class="text-indigo-600">Flow</span></h1>
-                <div id="profile-container" class="relative inline-block">
-                    <button id="profile-trigger" class="flex items-center gap-2 px-3 py-2 bg-white rounded-xl shadow-sm border border-gray-100 hover:bg-gray-50 transition-all">
-                        <div class="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">F</div>
-                        <p class="text-gray-700 font-bold text-xs">Local Storage Mode</p>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                    </button>
+            <div class="flex flex-col gap-4">
+                <h1 class="text-4xl font-black text-indigo-950 dark:text-white">Fin <span class="text-indigo-600">Flow</span></h1>
+                
+                <div class="flex items-center gap-3">
+                    <div id="profile-container" class="relative inline-block">
+                        <button id="profile-trigger" class="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-all">
+                            <div class="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">F</div>
+                            <p class="text-gray-700 dark:text-slate-200 font-bold text-xs">Local Storage Mode</p>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                        </button>
 
-                    <div class="dropdown-menu absolute left-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 z-[100] py-2">
-                        <button id="setup-pin-btn" class="w-full text-left px-4 py-2 text-xs font-bold text-indigo-600 hover:bg-indigo-50">Setup PIN</button>
-                        <button id="remove-pin-btn" class="hidden w-full text-left px-4 py-2 text-xs font-bold text-orange-600 hover:bg-orange-50">Remove PIN</button>
-                        <button id="lock-now-btn" class="hidden w-full text-left px-4 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50">Lock Now</button>
-                        <hr class="my-1 border-gray-50">
-                        <button id="export-pdf-btn" class="w-full text-left px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50">Export Report (PDF)</button>
+                        <div class="dropdown-menu absolute left-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-700 z-[100] py-2">
+                            <button id="setup-pin-btn" class="w-full text-left px-4 py-2 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20">Setup PIN</button>
+                            <button id="remove-pin-btn" class="hidden w-full text-left px-4 py-2 text-xs font-bold text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20">Remove PIN</button>
+                            <button id="lock-now-btn" class="hidden w-full text-left px-4 py-2 text-xs font-bold text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700">Lock Now</button>
+                            <hr class="my-1 border-gray-50 dark:border-slate-700">
+                            <button id="export-pdf-btn" class="w-full text-left px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">Export Report (PDF)</button>
+                        </div>
                     </div>
+
+                    <!-- Enhanced Theme Toggle -->
+                    <button id="theme-toggle" class="relative overflow-hidden p-2.5 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 text-gray-500 dark:text-yellow-400 hover:bg-gray-50 dark:hover:bg-slate-700 transition-all group">
+                        <div id="sun-icon-wrapper" class="hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 theme-icon-animate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <path d="M12 2v2"></path>
+                                <path d="M12 20v2"></path>
+                                <path d="m4.93 4.93 1.41 1.41"></path>
+                                <path d="m17.66 17.66 1.41 1.41"></path>
+                                <path d="M2 12h2"></path>
+                                <path d="M20 12h2"></path>
+                                <path d="m6.34 17.66-1.41 1.41"></path>
+                                <path d="m19.07 4.93-1.41 1.41"></path>
+                            </svg>
+                        </div>
+                        <div id="moon-icon-wrapper">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 theme-icon-animate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                            </svg>
+                        </div>
+                    </button>
                 </div>
             </div>
             
-            <div class="bg-indigo-950 text-white px-10 py-6 rounded-[2rem] shadow-2xl min-w-[250px] text-center">
+            <div class="bg-indigo-950 dark:bg-indigo-900 text-white px-10 py-6 rounded-[2rem] shadow-2xl min-w-[250px] text-center border border-white/5">
                 <span id="balance-label" class="text-xs uppercase font-bold tracking-widest text-indigo-300">Total Balance</span>
                 <p id="total-balance" class="text-4xl md:text-5xl font-black mt-2">0.00</p>
             </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Stats Grid -->
             <div class="lg:col-span-4 space-y-6">
                 <div class="grid grid-cols-2 lg:grid-cols-1 gap-4">
-                    <div class="glass-card p-4 rounded-2xl border-l-4 border-purple-500">
-                        <h3 class="text-[10px] font-bold text-gray-400 uppercase">Capital</h3>
-                        <p id="total-capital" class="text-xl font-black text-purple-600">0.00</p>
+                    <div class="glass-card bg-white dark:bg-slate-800 p-4 rounded-2xl border-l-4 border-purple-500 shadow-sm">
+                        <h3 class="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase">Capital</h3>
+                        <p id="total-capital" class="text-xl font-black text-purple-600 dark:text-purple-400">0.00</p>
                     </div>
-                    <div class="glass-card p-4 rounded-2xl border-l-4 border-indigo-400">
-                        <h3 class="text-[10px] font-bold text-gray-400 uppercase">Withdraw</h3>
-                        <p id="total-drawings" class="text-xl font-black text-indigo-500">0.00</p>
+                    <div class="glass-card bg-white dark:bg-slate-800 p-4 rounded-2xl border-l-4 border-indigo-400 shadow-sm">
+                        <h3 class="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase">Withdraw</h3>
+                        <p id="total-drawings" class="text-xl font-black text-indigo-500 dark:text-indigo-300">0.00</p>
                     </div>
-                    <div class="glass-card p-4 rounded-2xl border-l-4 border-green-500">
-                        <h3 class="text-[10px] font-bold text-gray-400 uppercase">Income</h3>
-                        <p id="total-income" class="text-xl font-black text-green-600">0.00</p>
+                    <div class="glass-card bg-white dark:bg-slate-800 p-4 rounded-2xl border-l-4 border-green-500 shadow-sm">
+                        <h3 class="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase">Income</h3>
+                        <p id="total-income" class="text-xl font-black text-green-600 dark:text-green-400">0.00</p>
                     </div>
-                    <div class="glass-card p-4 rounded-2xl border-l-4 border-red-500">
-                        <h3 class="text-[10px] font-bold text-gray-400 uppercase">Expense</h3>
-                        <p id="total-expense" class="text-xl font-black text-red-600">0.00</p>
+                    <div class="glass-card bg-white dark:bg-slate-800 p-4 rounded-2xl border-l-4 border-red-500 shadow-sm">
+                        <h3 class="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase">Expense</h3>
+                        <p id="total-expense" class="text-xl font-black text-red-600 dark:text-red-400">0.00</p>
                     </div>
-                    <div class="glass-card p-4 rounded-2xl border-l-4 border-orange-500">
-                        <h3 class="text-[10px] font-bold text-gray-400 uppercase">Debt</h3>
-                        <p id="total-debt" class="text-xl font-black text-orange-600">0.00</p>
+                    <div class="glass-card bg-white dark:bg-slate-800 p-4 rounded-2xl border-l-4 border-orange-500 shadow-sm">
+                        <h3 class="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase">Debt</h3>
+                        <p id="total-debt" class="text-xl font-black text-orange-600 dark:text-orange-400">0.00</p>
                     </div>
                 </div>
-                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-50 h-48 relative">
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-gray-50 dark:border-slate-700 h-48 relative">
                     <canvas id="statsChart"></canvas>
                 </div>
             </div>
 
+            <!-- New Entry Form -->
             <div class="lg:col-span-3">
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 sticky top-8">
-                    <h3 class="text-lg font-bold mb-6">New Entry</h3>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 sticky top-8">
+                    <h3 class="text-lg font-bold mb-6 dark:text-white">New Entry</h3>
                     <form id="transaction-form" class="space-y-4">
-                        <input type="text" id="text" placeholder="Description" class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl text-sm" required>
-                        <input type="number" id="amount" step="any" placeholder="Amount" class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl text-sm font-black" required>
-                        <input type="date" id="date" class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl text-sm" required>
-                        <select id="type" class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl text-sm font-bold">
+                        <input type="text" id="text" placeholder="Description" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm dark:text-white dark:placeholder-slate-400" required>
+                        <input type="number" id="amount" step="any" placeholder="Amount" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm font-black dark:text-white" required>
+                        <input type="date" id="date" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm dark:text-white" required>
+                        <select id="type" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm font-bold dark:text-white">
                             <option value="capital">Capital</option>
                             <option value="drawings">Withdraw</option>
                             <option value="income">Income</option>
@@ -149,17 +187,18 @@
                 </div>
             </div>
 
+            <!-- History List -->
             <div class="lg:col-span-5">
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 min-h-[500px]">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 min-h-[500px]">
                     <div class="flex flex-col gap-4 mb-6">
                         <div class="flex justify-between items-center">
-                            <h3 class="font-black uppercase tracking-widest text-sm">History</h3>
-                            <button id="clear-history-btn" class="hidden text-[10px] font-bold text-red-500 hover:bg-red-50 border border-red-200 px-3 py-1.5 rounded-lg transition-all uppercase tracking-tight">Clear All</button>
+                            <h3 class="font-black uppercase tracking-widest text-sm dark:text-slate-300">History</h3>
+                            <button id="clear-history-btn" class="hidden text-[10px] font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 border border-red-200 dark:border-red-900 px-3 py-1.5 rounded-lg transition-all uppercase tracking-tight">Clear All</button>
                         </div>
                         
-                        <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-2xl">
-                            <input type="date" id="filter-date" class="bg-transparent border-none text-xs font-bold text-gray-600 focus:ring-0 w-full cursor-pointer">
-                            <button id="show-all-btn" class="text-[10px] font-bold text-indigo-600 bg-white px-3 py-2 rounded-xl shadow-sm hover:shadow-md transition-all whitespace-nowrap">Show All</button>
+                        <div class="flex items-center gap-2 bg-gray-50 dark:bg-slate-700 p-2 rounded-2xl">
+                            <input type="date" id="filter-date" class="bg-transparent border-none text-xs font-bold text-gray-600 dark:text-slate-300 focus:ring-0 w-full cursor-pointer">
+                            <button id="show-all-btn" class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 px-3 py-2 rounded-xl shadow-sm hover:shadow-md transition-all whitespace-nowrap">Show All</button>
                         </div>
                     </div>
                     <ul id="list" class="space-y-3"></ul>
@@ -168,16 +207,18 @@
         </div>
     </div>
 
+    <!-- Notification -->
     <div id="notification" class="fixed bottom-8 left-1/2 -translate-x-1/2 translate-y-32 opacity-0 transition-all duration-500 z-[150]">
-        <div class="bg-indigo-950 text-white px-8 py-4 rounded-3xl shadow-2xl text-sm font-bold" id="notif-text">Success!</div>
+        <div class="bg-indigo-950 dark:bg-indigo-600 text-white px-8 py-4 rounded-3xl shadow-2xl text-sm font-bold" id="notif-text">Success!</div>
     </div>
 
+    <!-- Confirm Modal -->
     <div id="confirm-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-        <div class="bg-white p-6 rounded-[2.5rem] shadow-2xl w-full max-w-xs text-center border border-gray-100">
-            <h3 class="text-lg font-black text-indigo-950 mb-2">Clear History?</h3>
-            <p class="text-xs text-gray-500 mb-6 leading-relaxed px-4">This will permanently delete all your transaction entries locally. This action cannot be undone.</p>
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-[2.5rem] shadow-2xl w-full max-w-xs text-center border border-gray-100 dark:border-slate-700">
+            <h3 class="text-lg font-black text-indigo-950 dark:text-white mb-2">Clear History?</h3>
+            <p class="text-xs text-gray-500 dark:text-slate-400 mb-6 leading-relaxed px-4">This will permanently delete all your transaction entries locally. This action cannot be undone.</p>
             <div class="flex gap-3">
-                <button id="cancel-clear" class="flex-1 py-3 rounded-xl bg-gray-100 text-gray-600 font-bold text-xs">Cancel</button>
+                <button id="cancel-clear" class="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 font-bold text-xs">Cancel</button>
                 <button id="confirm-clear" class="flex-1 py-3 rounded-xl bg-red-500 text-white font-bold text-xs">Delete All</button>
             </div>
         </div>
@@ -202,14 +243,48 @@
         const removePinBtn = document.getElementById('remove-pin-btn');
         const lockNowBtn = document.getElementById('lock-now-btn');
         const exportPdfBtn = document.getElementById('export-pdf-btn');
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIconWrapper = document.getElementById('sun-icon-wrapper');
+        const moonIconWrapper = document.getElementById('moon-icon-wrapper');
 
         // App Init
         function init() {
             document.getElementById('date').valueAsDate = new Date();
+            initTheme();
             initChart();
             checkLockStatus();
             refreshUI();
         }
+
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('bp_theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+                sunIconWrapper.classList.remove('hidden');
+                moonIconWrapper.classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                sunIconWrapper.classList.add('hidden');
+                moonIconWrapper.classList.remove('hidden');
+            }
+        }
+
+        themeToggle.onclick = () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('bp_theme', isDark ? 'dark' : 'light');
+            
+            // Toggle visibility
+            sunIconWrapper.classList.toggle('hidden', !isDark);
+            moonIconWrapper.classList.toggle('hidden', isDark);
+            
+            // Re-init chart colors
+            if (statsChart) {
+                statsChart.options.scales.y.ticks.color = isDark ? '#94a3b8' : '#64748b';
+                statsChart.update();
+            }
+            showNotif(isDark ? "Dark Mode Enabled" : "Light Mode Enabled");
+        };
 
         function checkLockStatus() {
             if (userPin && !sessionStorage.getItem('bp_unlocked')) {
@@ -265,7 +340,7 @@
                 statsChart.update();
             }
 
-            list.innerHTML = filtered.length ? '' : `<li class="text-center text-gray-400 text-xs py-10">No entries found</li>`;
+            list.innerHTML = filtered.length ? '' : `<li class="text-center text-gray-400 dark:text-slate-500 text-xs py-10">No entries found</li>`;
             
             if(transactions.length > 0) clearBtn.classList.remove('hidden');
             else clearBtn.classList.add('hidden');
@@ -279,19 +354,19 @@
                 if(t.type === 'debt') borderCol = 'border-orange-400';
                 if(t.type === 'capital') borderCol = 'border-purple-400';
 
-                li.className = `flex justify-between items-center p-4 rounded-2xl bg-gray-50 border-l-4 ${borderCol} animate-fadeIn`;
+                li.className = `flex justify-between items-center p-4 rounded-2xl bg-gray-50 dark:bg-slate-700/50 border-l-4 ${borderCol} animate-fadeIn`;
                 
                 const dateObj = new Date(t.date);
                 const formattedDate = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
                 li.innerHTML = `
                     <div>
-                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-tight mb-0.5">${formattedDate} • ${t.type === 'drawings' ? 'WITHDRAW' : t.type.toUpperCase()}</p>
-                        <h4 class="font-bold text-sm text-indigo-950">${t.text}</h4>
+                        <p class="text-[9px] font-bold text-gray-400 dark:text-slate-400 uppercase tracking-tight mb-0.5">${formattedDate} • ${t.type === 'drawings' ? 'WITHDRAW' : t.type.toUpperCase()}</p>
+                        <h4 class="font-bold text-sm text-indigo-950 dark:text-slate-100">${t.text}</h4>
                     </div>
                     <div class="flex items-center gap-4">
-                        <span class="font-black text-sm ${(t.type === 'expense' || t.type === 'drawings') ? 'text-red-500' : 'text-green-600'}">${t.amount.toFixed(2)}</span>
-                        <button onclick="delItem('${t.id}')" class="w-8 h-8 flex items-center justify-center rounded-full text-red-300 hover:text-red-500 hover:bg-red-50 transition-colors">✕</button>
+                        <span class="font-black text-sm ${(t.type === 'expense' || t.type === 'drawings') ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400'}">${t.amount.toFixed(2)}</span>
+                        <button onclick="delItem('${t.id}')" class="w-8 h-8 flex items-center justify-center rounded-full text-red-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors">✕</button>
                     </div>`;
                 list.appendChild(li);
             });
@@ -307,7 +382,7 @@
             }
         };
 
-        // PDF Generation - Name Updated in PDF too
+        // PDF Generation
         exportPdfBtn.onclick = () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -465,12 +540,17 @@
         }
 
         function initChart() {
+            const isDark = document.documentElement.classList.contains('dark');
             const ctx = document.getElementById('statsChart').getContext('2d');
             statsChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: ['Capital', 'Withdraw', 'Income', 'Expense', 'Debt'],
-                    datasets: [{ data: [0,0,0,0,0], backgroundColor: ['#a855f7', '#818cf8', '#10b981', '#ef4444', '#f59e0b'], borderRadius: 8 }]
+                    datasets: [{ 
+                        data: [0,0,0,0,0], 
+                        backgroundColor: ['#a855f7', '#818cf8', '#10b981', '#ef4444', '#f59e0b'], 
+                        borderRadius: 8 
+                    }]
                 },
                 options: { 
                     indexAxis: 'y', 
@@ -479,7 +559,12 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { grid: { display: false }, ticks: { display: false } },
-                        y: { grid: { display: false } }
+                        y: { 
+                            grid: { display: false },
+                            ticks: {
+                                color: isDark ? '#94a3b8' : '#64748b'
+                            }
+                        }
                     }
                 }
             });
