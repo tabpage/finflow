@@ -14,10 +14,10 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;700&family=Noto+Sans:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700;900&display=swap');
         
         body {
-            font-family: 'Noto Sans', 'Noto Sans Bengali', sans-serif;
+            font-family: 'Noto Sans', sans-serif;
             transition: background-color 0.3s ease, color 0.3s ease;
             -webkit-tap-highlight-color: transparent;
         }
@@ -84,6 +84,7 @@
         </div>
     </div>
 
+    <!-- Lock Screen with Text/Symbol Password support -->
     <div id="lock-screen" class="hidden fixed inset-0 z-[110] flex items-center justify-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-4">
         <div class="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl w-full max-sm border border-gray-200 dark:border-slate-700 text-center animate-fadeIn">
             <div class="mb-6">
@@ -91,11 +92,11 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                 </div>
                 <h3 class="text-xl font-black text-indigo-950 dark:text-white">App Locked</h3>
-                <p class="text-gray-500 dark:text-slate-400 text-xs mt-1">Enter your security PIN</p>
+                <p class="text-gray-500 dark:text-slate-400 text-xs mt-1">Enter your Security Password</p>
             </div>
             
             <form id="pin-form" class="space-y-4">
-                <input type="password" id="pin-input" maxlength="4" placeholder="••••" class="w-full text-center text-2xl tracking-[1em] px-4 py-4 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 dark:text-white" required autofocus>
+                <input type="password" id="pin-input" placeholder="Type password..." class="w-full text-center text-lg px-4 py-4 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 dark:text-white" required autofocus>
                 <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-indigo-700 transition-all">Unlock</button>
             </form>
             
@@ -117,8 +118,8 @@
                         </button>
 
                         <div class="dropdown-menu absolute left-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-700 z-[100] py-2">
-                            <button id="setup-pin-btn" class="w-full text-left px-4 py-2 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20">Setup PIN</button>
-                            <button id="remove-pin-btn" class="hidden w-full text-left px-4 py-2 text-xs font-bold text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20">Remove PIN</button>
+                            <button id="setup-pin-btn" class="w-full text-left px-4 py-2 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20">Setup Password</button>
+                            <button id="remove-pin-btn" class="hidden w-full text-left px-4 py-2 text-xs font-bold text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20">Remove Password</button>
                             <button id="lock-now-btn" class="hidden w-full text-left px-4 py-2 text-xs font-bold text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700">Lock Now</button>
                             <hr class="my-2 border-gray-50 dark:border-slate-700">
                             <div class="px-2">
@@ -281,7 +282,6 @@
             refreshUI();
         }
 
-        // Sets current date and time to inputs
         function setNow() {
             const now = new Date();
             document.getElementById('date').valueAsDate = now;
@@ -459,7 +459,6 @@
             doc.setFontSize(10);
             doc.setTextColor(...theme.subText);
             doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 28);
-            doc.text(`Theme: ${isDark ? 'Midnight (Dark)' : 'Standard (Light)'}`, 14, 33);
             
             let i=0, e=0, d=0, c=0, dr=0;
             transactions.forEach(t => {
@@ -513,7 +512,7 @@
                 styles: { font: 'helvetica', fontSize: 10 }
             });
 
-            doc.save(`fin_flow_${isDark ? 'dark' : 'light'}_report_${new Date().toISOString().split('T')[0]}.pdf`);
+            doc.save(`fin_flow_report_${new Date().toISOString().split('T')[0]}.pdf`);
             showNotif("PDF Exported");
         };
 
@@ -547,25 +546,26 @@
         };
 
         setupPinBtn.onclick = () => {
-            const p = prompt("Enter 4-digit PIN:");
-            if(p && p.length === 4) {
+            // Prompt for any string/password now
+            const p = prompt("Setup a new Password (unlimited length, symbols & numbers allowed):");
+            if(p && p.trim().length > 0) {
                 userPin = p;
                 localStorage.setItem('bp_pin', p);
                 sessionStorage.setItem('bp_unlocked', 'true');
                 checkLockStatus();
-                showNotif("PIN Set!");
-            } else if(p) {
-                showNotif("PIN must be 4 digits");
+                showNotif("Password Set!");
+            } else if(p !== null) {
+                showNotif("Password cannot be empty");
             }
         };
 
         removePinBtn.onclick = () => {
-            if(confirm("Remove security PIN?")) {
+            if(confirm("Remove security password?")) {
                 userPin = null;
                 localStorage.removeItem('bp_pin');
                 sessionStorage.removeItem('bp_unlocked');
                 checkLockStatus();
-                showNotif("PIN Removed");
+                showNotif("Password Removed");
             }
         };
 
@@ -579,14 +579,15 @@
             if(document.getElementById('pin-input').value === userPin) {
                 sessionStorage.setItem('bp_unlocked', 'true');
                 checkLockStatus();
+                document.getElementById('pin-input').value = '';
             } else {
-                showNotif("Incorrect PIN");
+                showNotif("Incorrect Password");
                 document.getElementById('pin-input').value = '';
             }
         };
 
         document.getElementById('reset-app').onclick = () => {
-            if(confirm("DANGER: This will delete ALL your local data and PIN. Continue?")) {
+            if(confirm("DANGER: This will delete ALL your local data and security settings. Continue?")) {
                 localStorage.clear();
                 sessionStorage.clear();
                 location.reload();
