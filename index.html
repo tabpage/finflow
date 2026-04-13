@@ -122,6 +122,11 @@
                             <button id="remove-pin-btn" class="hidden w-full text-left px-4 py-2 text-xs font-bold text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20">Remove Password</button>
                             <button id="lock-now-btn" class="hidden w-full text-left px-4 py-2 text-xs font-bold text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700">Lock Now</button>
                             <hr class="my-2 border-gray-50 dark:border-slate-700">
+                            <!-- JSON Import/Export Buttons -->
+                            <button id="export-json-btn" class="w-full text-left px-4 py-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20">Export Backup (.json)</button>
+                            <button id="import-json-btn" class="w-full text-left px-4 py-2 text-xs font-bold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20">Import Backup (.json)</button>
+                            <input type="file" id="json-file-input" class="hidden" accept=".json">
+                            <hr class="my-2 border-gray-50 dark:border-slate-700">
                             <div class="px-2">
                                 <button id="export-pdf-btn" class="w-full flex items-center justify-center gap-2 px-4 py-3 text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
@@ -270,6 +275,9 @@
         const removePinBtn = document.getElementById('remove-pin-btn');
         const lockNowBtn = document.getElementById('lock-now-btn');
         const exportPdfBtn = document.getElementById('export-pdf-btn');
+        const exportJsonBtn = document.getElementById('export-json-btn');
+        const importJsonBtn = document.getElementById('import-json-btn');
+        const jsonFileInput = document.getElementById('json-file-input');
         const themeToggle = document.getElementById('theme-toggle');
         const sunIconWrapper = document.getElementById('sun-icon-wrapper');
         const moonIconWrapper = document.getElementById('moon-icon-wrapper');
@@ -426,6 +434,49 @@
             }
         };
 
+        // Export JSON logic
+        exportJsonBtn.onclick = () => {
+            const dataStr = JSON.stringify(transactions, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `fin_flow_backup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showNotif("Backup Exported!");
+        };
+
+        // Import JSON logic
+        importJsonBtn.onclick = () => jsonFileInput.click();
+
+        jsonFileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const importedData = JSON.parse(event.target.result);
+                    if (Array.isArray(importedData)) {
+                        if (confirm("Replace existing data with this backup?")) {
+                            transactions = importedData;
+                            refreshUI();
+                            showNotif("Backup Imported!");
+                        }
+                    } else {
+                        showNotif("Invalid backup format");
+                    }
+                } catch (err) {
+                    showNotif("Error reading file");
+                }
+                e.target.value = ''; // Reset input
+            };
+            reader.readAsText(file);
+        };
+
         exportPdfBtn.onclick = () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -546,16 +597,13 @@
         };
 
         setupPinBtn.onclick = () => {
-            // Prompt for any string/password now
-            const p = prompt("Setup a new Password (unlimited length, symbols & numbers allowed):");
+            const p = prompt("Setup a new Password:");
             if(p && p.trim().length > 0) {
                 userPin = p;
                 localStorage.setItem('bp_pin', p);
                 sessionStorage.setItem('bp_unlocked', 'true');
                 checkLockStatus();
                 showNotif("Password Set!");
-            } else if(p !== null) {
-                showNotif("Password cannot be empty");
             }
         };
 
@@ -587,7 +635,7 @@
         };
 
         document.getElementById('reset-app').onclick = () => {
-            if(confirm("DANGER: This will delete ALL your local data and security settings. Continue?")) {
+            if(confirm("DANGER: This will delete ALL your local data. Continue?")) {
                 localStorage.clear();
                 sessionStorage.clear();
                 location.reload();
