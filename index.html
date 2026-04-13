@@ -477,7 +477,18 @@
             reader.readAsText(file);
         };
 
+        // ========== UPDATED PDF EXPORT with FILTER SUPPORT ==========
         exportPdfBtn.onclick = () => {
+            // ফিল্টার অনুযায়ী ডেটা নেওয়া
+            let filteredForReport = [...transactions];
+            if (activeFilterDate) {
+                filteredForReport = filteredForReport.filter(t => t.date === activeFilterDate);
+            }
+            if (filteredForReport.length === 0) {
+                showNotif("No data available for the selected filter!");
+                return;
+            }
+            
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             const isDark = document.documentElement.classList.contains('dark');
@@ -509,16 +520,21 @@
             
             doc.setFontSize(10);
             doc.setTextColor(...theme.subText);
-            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 28);
+            let reportDateText = `Generated on: ${new Date().toLocaleString()}`;
+            if (activeFilterDate) {
+                reportDateText += ` | Filtered by date: ${activeFilterDate}`;
+            }
+            doc.text(reportDateText, 14, 28);
             
-            let i=0, e=0, d=0, c=0, dr=0;
-            transactions.forEach(t => {
+            // ফিল্টার করা ডেটার উপর ভিত্তি করে সামারি
+            let i = 0, e = 0, d = 0, c = 0, dr = 0;
+            filteredForReport.forEach(t => {
                 const a = Number(t.amount) || 0;
-                if(t.type==='income') i+=a;
-                else if(t.type==='expense') e+=a;
-                else if(t.type==='debt') d+=a;
-                else if(t.type==='capital') c+=a;
-                else if(t.type==='drawings') dr+=a;
+                if(t.type === 'income') i += a;
+                else if(t.type === 'expense') e += a;
+                else if(t.type === 'debt') d += a;
+                else if(t.type === 'capital') c += a;
+                else if(t.type === 'drawings') dr += a;
             });
             const bal = (i + c) - (e + dr);
 
@@ -538,7 +554,7 @@
             doc.setTextColor(...theme.text);
             doc.text("Transaction History", 14, doc.lastAutoTable.finalY + 15);
 
-            const tableData = transactions
+            const tableData = filteredForReport
                 .sort((a,b) => a.createdAt - b.createdAt)
                 .map(t => [
                     `${new Date(t.date).toLocaleDateString('en-GB')} ${t.time ? formatTime12h(t.time) : ''}`,
@@ -563,9 +579,14 @@
                 styles: { font: 'helvetica', fontSize: 10 }
             });
 
-            doc.save(`fin_flow_report_${new Date().toISOString().split('T')[0]}.pdf`);
-            showNotif("PDF Exported");
+            let fileName = `fin_flow_report_${new Date().toISOString().split('T')[0]}`;
+            if (activeFilterDate) {
+                fileName += `_filtered_${activeFilterDate}`;
+            }
+            doc.save(`${fileName}.pdf`);
+            showNotif("Filtered PDF Exported");
         };
+        // ========== END OF UPDATED PDF EXPORT ==========
 
         document.getElementById('transaction-form').onsubmit = (e) => {
             e.preventDefault();
