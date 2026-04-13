@@ -1,97 +1,109 @@
 Fin Flow - Smart Finance Tracker
 
-Fin Flow is a lightweight, high-performance personal finance management tool built for the modern web. It provides a clean, "glassmorphism" inspired interface to help users track capital, income, expenses, withdrawals, and debts with real-time visual analytics.
+Fin Flow is a lightweight, high-performance personal finance management tool built for the modern web. It features a sophisticated "glassmorphism" interface designed to help users track capital, income, expenses, withdrawals, and debts with real-time visual analytics and robust local security.
 
 🔗 Live Demo
 
 Access the application online here: https://tabpage.github.io/finflow/
 
+
 ✨ Key Features
 
-Comprehensive Tracking: Categorize entries into Capital, Withdrawals, Income, Expenses, and Debt.
+📊 Real-Time Analytics
 
-Visual Analytics: Real-time bar charts powered by Chart.js provide a breakdown of your financial distribution.
+Dynamic Bar Chart: Powered by Chart.js, providing an instant visual breakdown of your financial distribution (Capital, Withdraw, Income, Expense, Debt).
 
-Local Security:
+Live Summaries: Total Balance, Income, and Expense cards update instantly with every transaction.
 
-PIN Lock: Secure your data with a 4-digit PIN stored in your local session.
+🛡️ Enhanced Security
 
-Lock Now: Instantly hide your financial data with a blur-based lock screen.
+PIN Protection: Secure your financial data with a custom 4-digit PIN.
 
-Data Management:
+Privacy Lock: Toggle "Privacy Mode" to blur your sensitive balances or use "Lock Now" to protect the entire application session.
 
-Persistent Storage: Uses localStorage so your data remains even after refreshing the page.
+Session Management: The app intelligently handles login states to keep your data private.
 
-Filter by Date: Quickly drill down into transactions for a specific day.
+🌓 Modern UI/UX
 
-History Management: Delete individual entries or clear the entire history.
+Adaptive Theme: Toggle between Light and Dark modes with a single click.
 
-Export Reports: Generate professional PDF reports of your financial summary and transaction history using jsPDF.
+Mobile First: Fully responsive layout using Tailwind CSS, optimized for both desktop and mobile touch interactions.
 
-Responsive Design: Fully optimized for mobile and desktop viewing using Tailwind CSS.
+Glassmorphism Design: A premium look with blurred backgrounds, smooth transitions, and Noto Sans typography.
+
+📑 Data & Portability
+
+Transaction History: Filterable history by date with the ability to delete individual entries.
+
+PDF Export: Generate professional, structured reports of your financial summary and transaction history using jsPDF and AutoTable.
+
+Local Persistence: Data is stored locally in your browser (localStorage), meaning no account is required and your data never leaves your device.
 
 🛠️ Technical Stack
 
-Frontend: HTML5, Tailwind CSS
+Framework: Vanilla HTML5 & JavaScript
 
-Visuals: Chart.js
+Styling: Tailwind CSS (Custom Dark Mode & Glassmorphism)
+
+Charts: Chart.js
 
 PDF Generation: jsPDF & jsPDF-AutoTable
 
-Storage: Browser localStorage (No backend required)
-
-Icons & Fonts: Google Fonts (Noto Sans)
+Typography: Google Fonts (Noto Sans)
 
 🚀 Getting Started
 
-Since Fin Flow is a client-side application, getting started is simple:
+Since Fin Flow is a client-side application, setup is instant:
 
-Visit the Live Site: Go to tabpage.github.io/finflow/
+Visit the Live Site: tabpage.github.io/finflow/
 
-Alternative (Local): Download the index.html file and open it in any modern web browser.
+Local Setup: - Clone this repository or download the index.html.
 
-Start Tracking: Add your first entry using the "New Entry" form on the left/center panel.
+Open index.html in any modern web browser.
+
+Setup Security: Click the profile icon in the top-left to "Setup PIN" and secure your local storage.
 
 📖 Usage Guide
 
-Setting up a PIN
+1. Setting up Security
 
-Click on the Local Storage Mode profile button in the top left.
+Open the Sidebar Menu (Top-Left Profile Icon).
 
 Select Setup PIN.
 
-Enter a 4-digit code. Your app will now require this code whenever the session expires or the app is locked.
+Enter a 4-digit code. You will now be prompted for this code whenever you revisit the site.
 
-Filtering Transactions
+2. Managing Transactions
 
-Use the date picker in the History section to view entries for a specific day.
+Use the New Entry form to add data.
 
-Click Show All to return to the full transaction list.
+Categories:
 
-Exporting Data
+Capital: Your starting or base funds.
 
-Open the profile menu (Top Left).
+Income/Expense: Daily flow of money.
 
-Click Export Report (PDF). This will generate a document containing your net balance summary and a detailed table of all transactions.
+Withdraw/Debt: Tracking specific transfers or liabilities.
 
-Resetting the App
+3. Exporting Reports
 
-If you forget your PIN or want to wipe all data, click the Reset App (Delete Data) link on the lock screen. Warning: This action is permanent.
+Click Export Report (PDF) in the sidebar.
+
+The app generates a clean PDF document including your current balance overview and a detailed table of all logged transactions.
+
+4. Resetting the App
+
+If you wish to wipe all data or reset your PIN, use the Reset App link on the Lock Screen.
+
+Note: This action is permanent and clears all browser local storage for this app.
 
 📂 File Structure
 
-index.html
-├── HTML5 (Structure)
-├── Tailwind CSS (Styling)
-├── JavaScript (Application Logic)
-│   ├── State Management (localStorage)
-│   ├── Chart Initialization
-│   ├── PDF Logic
-│   └── Security/PIN Handlers
-└── External CDN Dependencies
-
+finflow/
+├── index.html          # Core Application (Logic, UI, and Styles)
+└── README.md           # Documentation
 
 
 📝 License
 
-This project is open-source. Feel free to modify and adapt it for your personal use.
+This project is open-source. Feel free to fork, modify, and adapt it for your personal use.
