@@ -14,84 +14,31 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700;900&display=swap');
-
-        body {
-            font-family: 'Noto Sans', sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        body { font-family: 'Noto Sans', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; -webkit-tap-highlight-color: transparent; }
         .glass-card { transition: all 0.3s ease; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes rotateIn {
-            from { transform: rotate(-90deg) scale(0.5); opacity: 0; }
-            to { transform: rotate(0) scale(1); opacity: 1; }
-        }
-        @keyframes pulseHighlight {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
-            50% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
-        }
-
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes rotateIn { from { transform: rotate(-90deg) scale(0.5); opacity: 0; } to { transform: rotate(0) scale(1); opacity: 1; } }
+        @keyframes pulseHighlight { 0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); } }
         .animate-fadeIn { animation: fadeIn 0.4s ease-out forwards; }
         .theme-icon-animate { animation: rotateIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-
-        #loading-overlay { backdrop-filter: blur(8px); }
-
         .dropdown-menu { display: none; animation: fadeIn 0.2s ease-out; }
         .dropdown-active .dropdown-menu { display: block; }
-
-        #list-container { scroll-behavior: smooth; }
-
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
         .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
-
-        #list li {
-            user-select: none;
-            -webkit-user-select: none;
-            touch-action: manipulation;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
+        #list li { user-select: none; -webkit-user-select: none; touch-action: manipulation; cursor: pointer; transition: all 0.2s ease; }
         #list li:hover { transform: translateX(2px); }
-
-        .editing-highlight {
-            animation: pulseHighlight 0.8s ease-out 2;
-            background-color: rgba(99, 102, 241, 0.08) !important;
-            border-left-width: 6px !important;
-            border-left-color: #6366f1 !important;
-        }
+        .editing-highlight { animation: pulseHighlight 0.8s ease-out 2; background-color: rgba(99, 102, 241, 0.08) !important; border-left-width: 6px !important; border-left-color: #6366f1 !important; }
         .dark .editing-highlight { background-color: rgba(129, 140, 248, 0.12) !important; }
-
-        .context-hint {
-            position: fixed;
-            pointer-events: none;
-            z-index: 300;
-            opacity: 0;
-            transform: translate(-50%, -100%) translateY(-12px);
-            transition: opacity 0.2s ease;
-            background: #1e293b;
-            color: #f1f5f9;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 6px 12px;
-            border-radius: 20px;
-            white-space: nowrap;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
+        .context-hint { position: fixed; pointer-events: none; z-index: 300; opacity: 0; transform: translate(-50%, -100%) translateY(-12px); transition: opacity 0.2s ease; background: #1e293b; color: #f1f5f9; font-size: 10px; font-weight: 700; padding: 6px 12px; border-radius: 20px; white-space: nowrap; letter-spacing: 0.5px; text-transform: uppercase; }
         .dark .context-hint { background: #f1f5f9; color: #1e293b; }
         .context-hint.visible { opacity: 1; }
     </style>
 </head>
 <body class="antialiased text-gray-800 bg-slate-50 dark:bg-slate-950 dark:text-slate-200">
 
-    <!-- Loading Screen -->
+    <!-- Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 opacity-0 pointer-events-none bg-white/90 dark:bg-slate-900/90">
         <div class="flex flex-col items-center gap-4">
             <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
@@ -99,7 +46,7 @@
         </div>
     </div>
 
-    <!-- Security Lock Screen -->
+    <!-- Lock Screen -->
     <div id="lock-screen" class="hidden fixed inset-0 z-[110] flex items-center justify-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-4">
         <div class="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl w-full max-sm border border-gray-200 dark:border-slate-700 text-center animate-fadeIn">
             <div class="mb-6">
@@ -166,7 +113,7 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Stats Summary Cards -->
+            <!-- Stats Cards -->
             <div class="lg:col-span-4 space-y-6">
                 <div class="grid grid-cols-2 lg:grid-cols-1 gap-4">
                     <div class="glass-card bg-white dark:bg-slate-800 p-4 rounded-2xl border-l-4 border-purple-500 shadow-sm">
@@ -194,18 +141,18 @@
                         <p id="total-repayment" class="text-xl font-black text-cyan-600 dark:text-cyan-400">0.00</p>
                     </div>
                 </div>
-                <!-- Visual Chart -->
                 <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-gray-50 dark:border-slate-700 h-48 relative">
                     <canvas id="statsChart"></canvas>
                 </div>
             </div>
 
-            <!-- New Entry Form -->
+            <!-- New Entry Form with Custom Category -->
             <div class="lg:col-span-3">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 sticky top-8">
                     <h3 class="text-lg font-bold mb-6 dark:text-white">New Entry</h3>
                     <form id="transaction-form" class="space-y-4">
                         <input type="text" id="text" placeholder="Description" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm dark:text-white dark:placeholder-slate-400" required>
+                        <input type="text" id="category" placeholder="Category (e.g., Groceries, Rent, Salary)" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm dark:text-white dark:placeholder-slate-400" required>
                         <input type="number" id="amount" step="any" min="0" placeholder="Amount" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm font-black dark:text-white" required>
                         <div class="grid grid-cols-2 gap-2">
                             <input type="date" id="date" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm dark:text-white" required>
@@ -224,7 +171,7 @@
                 </div>
             </div>
 
-            <!-- History List -->
+            <!-- History with category filter -->
             <div class="lg:col-span-5">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 min-h-[500px] flex flex-col">
                     <div class="flex flex-col gap-4 mb-6">
@@ -235,8 +182,9 @@
                                 <button id="clear-history-btn" class="hidden text-[10px] font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 border border-red-200 dark:border-red-900 px-3 py-1.5 rounded-lg transition-all uppercase tracking-tight">Clear All</button>
                             </div>
                         </div>
-                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-gray-50 dark:bg-slate-700 p-2 rounded-2xl">
-                            <input type="text" id="filter-search" placeholder="Search description..." class="bg-white dark:bg-slate-800 border-none text-xs font-bold text-gray-600 dark:text-slate-200 rounded-xl px-3 py-2 w-full sm:w-40 focus:ring-2 focus:ring-indigo-400 placeholder-gray-400 dark:placeholder-slate-500">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-gray-50 dark:bg-slate-700 p-2 rounded-2xl flex-wrap">
+                            <input type="text" id="filter-search" placeholder="Search description..." class="bg-white dark:bg-slate-800 border-none text-xs font-bold text-gray-600 dark:text-slate-200 rounded-xl px-3 py-2 w-full sm:w-32 focus:ring-2 focus:ring-indigo-400 placeholder-gray-400 dark:placeholder-slate-500">
+                            <input type="text" id="filter-category" placeholder="Filter category..." class="bg-white dark:bg-slate-800 border-none text-xs font-bold text-gray-600 dark:text-slate-200 rounded-xl px-3 py-2 w-full sm:w-32 focus:ring-2 focus:ring-indigo-400 placeholder-gray-400 dark:placeholder-slate-500">
                             <input type="date" id="filter-date" class="bg-transparent border-none text-xs font-bold text-gray-600 dark:text-slate-300 focus:ring-0 w-full sm:w-auto cursor-pointer">
                             <select id="filter-type" class="bg-transparent border-none text-xs font-bold text-gray-600 dark:text-slate-300 focus:ring-0 cursor-pointer">
                                 <option value="">All Types</option>
@@ -258,15 +206,15 @@
         </div>
     </div>
 
-    <!-- Toast Notifications -->
+    <!-- Toast -->
     <div id="notification" class="fixed bottom-8 left-1/2 -translate-x-1/2 translate-y-32 opacity-0 transition-all duration-500 z-[150]">
         <div class="bg-indigo-950 dark:bg-indigo-600 text-white px-8 py-4 rounded-3xl shadow-2xl text-sm font-bold" id="notif-text">Success!</div>
     </div>
 
-    <!-- Context Hint Tooltip -->
+    <!-- Context Hint -->
     <div id="context-hint" class="context-hint">Edit Entry</div>
 
-    <!-- Confirm Clear History Modal -->
+    <!-- Confirm Clear Modal -->
     <div id="confirm-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
         <div class="bg-white dark:bg-slate-800 p-6 rounded-[2.5rem] shadow-2xl w-full max-xs text-center border border-gray-100 dark:border-slate-700">
             <h3 class="text-lg font-black text-indigo-950 dark:text-white mb-2">Clear History?</h3>
@@ -278,7 +226,7 @@
         </div>
     </div>
 
-    <!-- Edit Entry Modal -->
+    <!-- Edit Modal (includes category) -->
     <div id="edit-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
         <div class="bg-white dark:bg-slate-800 p-6 rounded-[2.5rem] shadow-2xl w-full max-w-sm border border-gray-100 dark:border-slate-700 animate-fadeIn">
             <div class="flex items-center gap-3 mb-5">
@@ -294,6 +242,10 @@
                 <div>
                     <label class="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-1 block">Description</label>
                     <input type="text" id="edit-text" placeholder="Description" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm dark:text-white dark:placeholder-slate-400 font-bold" required>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-1 block">Category</label>
+                    <input type="text" id="edit-category" placeholder="Category" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm dark:text-white dark:placeholder-slate-400 font-bold" required>
                 </div>
                 <div>
                     <label class="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-1 block">Amount</label>
@@ -312,24 +264,24 @@
     </div>
 
     <script>
-        // State Management
+        // Data model: transactions now include 'category' field
         let transactions = JSON.parse(localStorage.getItem('bp_transactions')) || [];
         let userPin = localStorage.getItem('bp_pin') || null;
         let statsChart;
         let activeFilterDate = null;
         let activeFilterType = '';
         let activeSearchText = '';
+        let activeCategoryFilter = '';
 
-        // Long press detection state
+        // Long press detection
         let longPressTimer = null;
-        let longPressStartX = 0;
-        let longPressStartY = 0;
+        let longPressStartX = 0, longPressStartY = 0;
         let editTransactionId = null;
         let isEditModalOpen = false;
         const LONG_PRESS_DURATION = 600;
         const MOVE_THRESHOLD = 12;
 
-        // Elements
+        // DOM elements
         const mainApp = document.getElementById('main-app');
         const lockScreen = document.getElementById('lock-screen');
         const list = document.getElementById('list');
@@ -337,9 +289,10 @@
         const clearBtn = document.getElementById('clear-history-btn');
         const confirmModal = document.getElementById('confirm-modal');
         const editModal = document.getElementById('edit-modal');
-        const filterInput = document.getElementById('filter-date');
+        const filterDate = document.getElementById('filter-date');
         const filterTypeSelect = document.getElementById('filter-type');
         const filterSearchInput = document.getElementById('filter-search');
+        const filterCategoryInput = document.getElementById('filter-category');
         const showAllBtn = document.getElementById('show-all-btn');
         const setupPinBtn = document.getElementById('setup-pin-btn');
         const removePinBtn = document.getElementById('remove-pin-btn');
@@ -423,7 +376,6 @@
             return `${h12}:${m} ${ampm}`;
         }
 
-        // Edit Event Delegation Setup
         function setupEditEventDelegation() {
             list.addEventListener('contextmenu', handleContextMenu);
             list.addEventListener('pointerdown', handlePointerDown);
@@ -468,22 +420,13 @@
             if (!longPressTimer) return;
             const dx = e.clientX - longPressStartX;
             const dy = e.clientY - longPressStartY;
-            const distance = Math.sqrt(dx*dx + dy*dy);
-            if (distance > MOVE_THRESHOLD) clearLongPress();
+            if (Math.sqrt(dx*dx + dy*dy) > MOVE_THRESHOLD) clearLongPress();
         }
 
-        function handlePointerUp(e) {
-            if (isEditModalOpen && longPressTimer === null && editTransactionId) {
-                clearLongPress();
-                return;
-            }
-            clearLongPress();
-        }
+        function handlePointerUp() { clearLongPress(); }
 
         function clearLongPress() {
             if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
-            longPressStartX = 0;
-            longPressStartY = 0;
             hideContextHint();
         }
 
@@ -493,17 +436,15 @@
             contextHint.classList.add('visible');
         }
 
-        function hideContextHint() {
-            contextHint.classList.remove('visible');
-        }
+        function hideContextHint() { contextHint.classList.remove('visible'); }
 
-        // Edit Modal Functions
         function openEditModal(id, liElement) {
             const txn = transactions.find(t => t.id === id);
             if (!txn) return;
             editTransactionId = id;
             isEditModalOpen = true;
             document.getElementById('edit-text').value = txn.text;
+            document.getElementById('edit-category').value = txn.category || '';
             document.getElementById('edit-amount').value = txn.amount;
             document.getElementById('edit-type-label').innerText = txn.type === 'drawings' ? 'WITHDRAWAL' : txn.type.toUpperCase();
             const dateObj = new Date(txn.date);
@@ -528,12 +469,14 @@
             const txn = transactions.find(t => t.id === editTransactionId);
             if (!txn) return;
             const newText = document.getElementById('edit-text').value.trim();
+            const newCategory = document.getElementById('edit-category').value.trim();
             const newAmount = parseFloat(document.getElementById('edit-amount').value);
-            if (!newText || isNaN(newAmount) || newAmount <= 0) {
-                showNotif("Please enter a valid description and positive amount");
+            if (!newText || !newCategory || isNaN(newAmount) || newAmount <= 0) {
+                showNotif("Please enter valid description, category, and positive amount");
                 return;
             }
             txn.text = newText;
+            txn.category = newCategory;
             txn.amount = newAmount;
             localStorage.setItem('bp_transactions', JSON.stringify(transactions));
             refreshUI();
@@ -544,11 +487,8 @@
         document.getElementById('edit-form').onsubmit = (e) => { e.preventDefault(); saveEdit(); };
         document.getElementById('cancel-edit').onclick = () => closeEditModal();
         editModal.onclick = (e) => { if (e.target === editModal) closeEditModal(); };
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !editModal.classList.contains('hidden')) closeEditModal();
-        });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !editModal.classList.contains('hidden')) closeEditModal(); });
 
-        // UI Refresh (now includes repayment)
         function refreshUI(shouldScrollToBottom = false) {
             let filtered = [...transactions];
             if (activeFilterDate) filtered = filtered.filter(t => t.date === activeFilterDate);
@@ -557,11 +497,16 @@
                 const s = activeSearchText.trim().toLowerCase();
                 filtered = filtered.filter(t => t.text.toLowerCase().includes(s));
             }
+            if (activeCategoryFilter.trim() !== '') {
+                const cat = activeCategoryFilter.trim().toLowerCase();
+                filtered = filtered.filter(t => (t.category || '').toLowerCase().includes(cat));
+            }
 
             let labelParts = [];
             if (activeFilterDate) labelParts.push(`Date: ${activeFilterDate}`);
             if (activeFilterType) labelParts.push(`Type: ${activeFilterType}`);
-            if (activeSearchText.trim() !== '') labelParts.push(`Search: "${activeSearchText}"`);
+            if (activeSearchText.trim() !== '') labelParts.push(`Desc: "${activeSearchText}"`);
+            if (activeCategoryFilter.trim() !== '') labelParts.push(`Cat: "${activeCategoryFilter}"`);
             document.getElementById('balance-label').innerText = labelParts.length ? `Filtered: ${labelParts.join(' & ')}` : "Total Balance";
 
             let income = 0, expense = 0, debt = 0, capital = 0, withdrawal = 0, repayment = 0;
@@ -579,7 +524,7 @@
 
             document.getElementById('total-income').innerText = income.toFixed(2);
             document.getElementById('total-expense').innerText = expense.toFixed(2);
-            document.getElementById('total-debt').innerText = (debt - repayment).toFixed(2);  // net debt
+            document.getElementById('total-debt').innerText = (debt - repayment).toFixed(2);
             document.getElementById('total-capital').innerText = capital.toFixed(2);
             document.getElementById('total-drawings').innerText = withdrawal.toFixed(2);
             document.getElementById('total-repayment').innerText = repayment.toFixed(2);
@@ -613,11 +558,15 @@
                 const dateObj = new Date(t.date);
                 const formattedDate = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
                 const displayTime = t.time ? formatTime12h(t.time) : '';
+                const categoryDisplay = t.category ? `<span class="text-[8px] font-bold bg-gray-200 dark:bg-slate-600 px-2 py-0.5 rounded-full ml-2">${escapeHtml(t.category)}</span>` : '';
 
                 li.innerHTML = `
                     <div class="flex-1 mr-4 pointer-events-none">
-                        <p class="text-[9px] font-bold text-gray-400 dark:text-slate-400 uppercase tracking-tight mb-0.5">${formattedDate} ${displayTime ? '• ' + displayTime : ''} • ${t.type === 'drawings' ? 'WITHDRAWAL' : t.type.toUpperCase()}</p>
-                        <h4 class="font-bold text-sm text-indigo-950 dark:text-slate-100 break-words leading-tight">${t.text}</h4>
+                        <div class="flex items-center flex-wrap gap-1 mb-1">
+                            <p class="text-[9px] font-bold text-gray-400 dark:text-slate-400 uppercase tracking-tight">${formattedDate} ${displayTime ? '• ' + displayTime : ''} • ${t.type === 'drawings' ? 'WITHDRAWAL' : t.type.toUpperCase()}</p>
+                            ${categoryDisplay}
+                        </div>
+                        <h4 class="font-bold text-sm text-indigo-950 dark:text-slate-100 break-words leading-tight">${escapeHtml(t.text)}</h4>
                     </div>
                     <div class="flex items-center gap-4 shrink-0">
                         <span class="font-black text-sm ${(t.type === 'expense' || t.type === 'drawings' || t.type === 'repayment') ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400'}">${t.amount.toFixed(2)}</span>
@@ -632,6 +581,8 @@
             }
         }
 
+        function escapeHtml(str) { return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+
         window.delItem = (id) => {
             if (confirm("Delete this entry?")) {
                 transactions = transactions.filter(t => t.id !== id);
@@ -640,7 +591,7 @@
             }
         };
 
-        // Export / Import / PDF
+        // Export / Import
         exportJsonBtn.onclick = () => {
             const dataStr = JSON.stringify(transactions, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
@@ -669,12 +620,8 @@
                             refreshUI();
                             showNotif("Backup Imported!");
                         }
-                    } else {
-                        showNotif("Invalid backup format");
-                    }
-                } catch (err) {
-                    showNotif("Error reading file");
-                }
+                    } else { showNotif("Invalid backup format"); }
+                } catch (err) { showNotif("Error reading file"); }
                 e.target.value = '';
             };
             reader.readAsText(file);
@@ -688,99 +635,56 @@
                 const s = activeSearchText.trim().toLowerCase();
                 filteredForReport = filteredForReport.filter(t => t.text.toLowerCase().includes(s));
             }
-            if (filteredForReport.length === 0) {
-                showNotif("No data available for report!");
-                return;
+            if (activeCategoryFilter.trim() !== '') {
+                const cat = activeCategoryFilter.trim().toLowerCase();
+                filteredForReport = filteredForReport.filter(t => (t.category || '').toLowerCase().includes(cat));
             }
+            if (filteredForReport.length === 0) { showNotif("No data available for report!"); return; }
 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             const isDark = document.documentElement.classList.contains('dark');
-            const theme = isDark ? {
-                bg: [15, 23, 42], header: [79, 70, 229], text: [255, 255, 255],
-                subText: [148, 163, 184], tableHead: [79, 70, 229], tableRow: [30, 41, 59]
-            } : {
-                bg: [255, 255, 255], header: [79, 70, 229], text: [30, 41, 59],
-                subText: [100, 116, 139], tableHead: [30, 41, 59], tableRow: [248, 250, 252]
-            };
-
+            const theme = isDark ? { bg: [15,23,42], header: [79,70,229], text: [255,255,255], subText: [148,163,184], tableHead: [79,70,229], tableRow: [30,41,59] }
+                                : { bg: [255,255,255], header: [79,70,229], text: [30,41,59], subText: [100,116,139], tableHead: [30,41,59], tableRow: [248,250,252] };
             if (isDark) { doc.setFillColor(...theme.bg); doc.rect(0, 0, 210, 297, 'F'); }
-
-            doc.setFontSize(24); doc.setTextColor(...theme.header);
-            doc.text("Fin Flow - Financial Report", 14, 20);
-
+            doc.setFontSize(24); doc.setTextColor(...theme.header); doc.text("Fin Flow - Financial Report", 14, 20);
             doc.setFontSize(10); doc.setTextColor(...theme.subText);
             let reportDateText = `Generated: ${new Date().toLocaleString()}`;
             let filterParts = [];
             if (activeFilterDate) filterParts.push(`Date: ${activeFilterDate}`);
             if (activeFilterType) filterParts.push(`Type: ${activeFilterType}`);
-            if (activeSearchText.trim() !== '') filterParts.push(`Search: "${activeSearchText}"`);
+            if (activeSearchText.trim() !== '') filterParts.push(`Desc: "${activeSearchText}"`);
+            if (activeCategoryFilter.trim() !== '') filterParts.push(`Category: "${activeCategoryFilter}"`);
             if (filterParts.length) reportDateText += ` | Filtered: ${filterParts.join(', ')}`;
             doc.text(reportDateText, 14, 28);
 
-            let i = 0, e = 0, d = 0, c = 0, dr = 0, rp = 0;
-            filteredForReport.forEach(t => {
-                const a = Number(t.amount) || 0;
-                if (t.type === 'income') i += a;
-                else if (t.type === 'expense') e += a;
-                else if (t.type === 'debt') d += a;
-                else if (t.type === 'capital') c += a;
-                else if (t.type === 'drawings') dr += a;
-                else if (t.type === 'repayment') rp += a;
-            });
-            const bal = (i + c) - (e + dr + rp);
-
-            doc.autoTable({
-                startY: 40,
-                head: [['Capital', 'Withdrawal', 'Income', 'Expense', 'Debt', 'Repayment', 'Net Balance']],
-                body: [[c.toFixed(2), dr.toFixed(2), i.toFixed(2), e.toFixed(2), d.toFixed(2), rp.toFixed(2), bal.toFixed(2)]],
-                theme: 'grid',
-                headStyles: { fillColor: theme.header, textColor: [255, 255, 255], fontStyle: 'bold' },
-                bodyStyles: { fillColor: isDark ? [51, 65, 85] : [255, 255, 255], textColor: isDark ? [255, 255, 255] : [30, 41, 59] }
-            });
-
-            doc.setFontSize(14); doc.setTextColor(...theme.text);
-            doc.text("Transaction History", 14, doc.lastAutoTable.finalY + 15);
-
-            const tableData = filteredForReport
-                .sort((a, b) => a.createdAt - b.createdAt)
-                .map(t => [
-                    `${new Date(t.date).toLocaleDateString('en-GB')} ${t.time ? formatTime12h(t.time) : ''}`,
-                    t.text,
-                    t.type === 'drawings' ? 'WITHDRAWAL' : t.type.toUpperCase(),
-                    t.amount.toFixed(2)
-                ]);
-
-            doc.autoTable({
-                startY: doc.lastAutoTable.finalY + 20,
-                head: [['Date & Time', 'Description', 'Type', 'Amount']],
-                body: tableData,
-                theme: isDark ? 'grid' : 'striped',
-                headStyles: { fillColor: theme.tableHead, textColor: [255, 255, 255] },
-                bodyStyles: { fillColor: isDark ? theme.tableRow : [255, 255, 255], textColor: isDark ? [255, 255, 255] : [30, 41, 59] },
-                alternateRowStyles: { fillColor: isDark ? [15, 23, 42] : [241, 245, 249] },
-                styles: { font: 'helvetica', fontSize: 10 }
-            });
-
+            let i=0,e=0,d=0,c=0,dr=0,rp=0;
+            filteredForReport.forEach(t => { let a=Number(t.amount)||0; if(t.type==='income') i+=a; else if(t.type==='expense') e+=a; else if(t.type==='debt') d+=a; else if(t.type==='capital') c+=a; else if(t.type==='drawings') dr+=a; else if(t.type==='repayment') rp+=a; });
+            const bal = (i+c)-(e+dr+rp);
+            doc.autoTable({ startY: 40, head: [['Capital','Withdrawal','Income','Expense','Debt','Repayment','Net Balance']], body: [[c.toFixed(2),dr.toFixed(2),i.toFixed(2),e.toFixed(2),d.toFixed(2),rp.toFixed(2),bal.toFixed(2)]], theme:'grid', headStyles:{fillColor:theme.header,textColor:[255,255,255],fontStyle:'bold'}, bodyStyles:{fillColor:isDark?[51,65,85]:[255,255,255],textColor:isDark?[255,255,255]:[30,41,59]} });
+            doc.setFontSize(14); doc.setTextColor(...theme.text); doc.text("Transaction History", 14, doc.lastAutoTable.finalY + 15);
+            const tableData = filteredForReport.sort((a,b)=>a.createdAt-b.createdAt).map(t => [ `${new Date(t.date).toLocaleDateString('en-GB')} ${t.time?formatTime12h(t.time):''}`, t.text, t.category || '-', t.type==='drawings'?'WITHDRAWAL':t.type.toUpperCase(), t.amount.toFixed(2) ]);
+            doc.autoTable({ startY: doc.lastAutoTable.finalY + 20, head: [['Date & Time','Description','Category','Type','Amount']], body: tableData, theme: isDark?'grid':'striped', headStyles:{fillColor:theme.tableHead,textColor:[255,255,255]}, bodyStyles:{fillColor:isDark?theme.tableRow:[255,255,255],textColor:isDark?[255,255,255]:[30,41,59]}, alternateRowStyles:{fillColor:isDark?[15,23,42]:[241,245,249]}, styles:{font:'helvetica',fontSize:10} });
             let fileName = `fin_flow_report_${new Date().toISOString().split('T')[0]}`;
             if (activeFilterDate) fileName += `_filtered_${activeFilterDate}`;
             if (activeFilterType) fileName += `_${activeFilterType}`;
             if (activeSearchText.trim() !== '') fileName += `_search_${activeSearchText}`;
+            if (activeCategoryFilter.trim() !== '') fileName += `_cat_${activeCategoryFilter}`;
             doc.save(`${fileName}.pdf`);
             showNotif("PDF Exported Successfully");
         };
 
-        // Transaction form with positive amount validation
+        // Form submission with category
         document.getElementById('transaction-form').onsubmit = (e) => {
             e.preventDefault();
             const amountVal = parseFloat(document.getElementById('amount').value);
-            if (isNaN(amountVal) || amountVal <= 0) {
-                showNotif("Amount must be a positive number");
-                return;
-            }
+            if (isNaN(amountVal) || amountVal <= 0) { showNotif("Amount must be a positive number"); return; }
+            const categoryVal = document.getElementById('category').value.trim();
+            if (!categoryVal) { showNotif("Please enter a category"); return; }
             const data = {
                 id: crypto.randomUUID(),
                 text: document.getElementById('text').value,
+                category: categoryVal,
                 amount: amountVal,
                 date: document.getElementById('date').value,
                 time: document.getElementById('time').value,
@@ -794,127 +698,42 @@
             showNotif("Entry Saved!");
         };
 
-        // Filtering
-        filterSearchInput.addEventListener('input', (e) => {
-            activeSearchText = e.target.value;
-            refreshUI();
-        });
-        filterInput.onchange = (e) => {
-            activeFilterDate = e.target.value;
-            refreshUI();
-        };
-        filterTypeSelect.onchange = (e) => {
-            activeFilterType = e.target.value;
-            refreshUI();
-        };
+        // Filters
+        filterSearchInput.addEventListener('input', (e) => { activeSearchText = e.target.value; refreshUI(); });
+        filterCategoryInput.addEventListener('input', (e) => { activeCategoryFilter = e.target.value; refreshUI(); });
+        filterDate.onchange = (e) => { activeFilterDate = e.target.value; refreshUI(); };
+        filterTypeSelect.onchange = (e) => { activeFilterType = e.target.value; refreshUI(); };
         showAllBtn.onclick = () => {
-            activeFilterDate = null;
-            activeFilterType = '';
-            activeSearchText = '';
-            filterInput.value = '';
-            filterTypeSelect.value = '';
-            filterSearchInput.value = '';
+            activeFilterDate = null; activeFilterType = ''; activeSearchText = ''; activeCategoryFilter = '';
+            filterDate.value = ''; filterTypeSelect.value = ''; filterSearchInput.value = ''; filterCategoryInput.value = '';
             refreshUI();
         };
 
-        // Security PIN
-        setupPinBtn.onclick = () => {
-            const p = prompt("Enter a new security password:");
-            if (p && p.trim().length > 0) {
-                userPin = p;
-                localStorage.setItem('bp_pin', p);
-                sessionStorage.setItem('bp_unlocked', 'true');
-                checkLockStatus();
-                showNotif("Password set!");
-            }
-        };
-        removePinBtn.onclick = () => {
-            if (confirm("Are you sure you want to remove the security password?")) {
-                userPin = null;
-                localStorage.removeItem('bp_pin');
-                sessionStorage.removeItem('bp_unlocked');
-                checkLockStatus();
-                showNotif("Security removed");
-            }
-        };
-        lockNowBtn.onclick = () => {
-            sessionStorage.removeItem('bp_unlocked');
-            checkLockStatus();
-        };
-        document.getElementById('pin-form').onsubmit = (e) => {
-            e.preventDefault();
-            if (document.getElementById('pin-input').value === userPin) {
-                sessionStorage.setItem('bp_unlocked', 'true');
-                checkLockStatus();
-                document.getElementById('pin-input').value = '';
-            } else {
-                showNotif("Incorrect Password");
-                document.getElementById('pin-input').value = '';
-            }
-        };
-        document.getElementById('reset-app').onclick = () => {
-            if (confirm("DANGER: This will permanently delete ALL data. Continue?")) {
-                localStorage.clear();
-                sessionStorage.clear();
-                location.reload();
-            }
-        };
+        // Security
+        setupPinBtn.onclick = () => { let p = prompt("Enter a new security password:"); if (p && p.trim().length>0) { userPin=p; localStorage.setItem('bp_pin',p); sessionStorage.setItem('bp_unlocked','true'); checkLockStatus(); showNotif("Password set!"); } };
+        removePinBtn.onclick = () => { if (confirm("Remove security password?")) { userPin=null; localStorage.removeItem('bp_pin'); sessionStorage.removeItem('bp_unlocked'); checkLockStatus(); showNotif("Security removed"); } };
+        lockNowBtn.onclick = () => { sessionStorage.removeItem('bp_unlocked'); checkLockStatus(); };
+        document.getElementById('pin-form').onsubmit = (e) => { e.preventDefault(); if (document.getElementById('pin-input').value === userPin) { sessionStorage.setItem('bp_unlocked','true'); checkLockStatus(); document.getElementById('pin-input').value=''; } else { showNotif("Incorrect Password"); document.getElementById('pin-input').value=''; } };
+        document.getElementById('reset-app').onclick = () => { if (confirm("DANGER: This will permanently delete ALL data. Continue?")) { localStorage.clear(); sessionStorage.clear(); location.reload(); } };
 
-        // Clear History
         clearBtn.onclick = () => confirmModal.classList.remove('hidden');
         document.getElementById('cancel-clear').onclick = () => confirmModal.classList.add('hidden');
-        document.getElementById('confirm-clear').onclick = () => {
-            transactions = [];
-            confirmModal.classList.add('hidden');
-            refreshUI();
-            showNotif("History Cleared!");
-        };
+        document.getElementById('confirm-clear').onclick = () => { transactions = []; confirmModal.classList.add('hidden'); refreshUI(); showNotif("History Cleared!"); };
 
-        // Profile Dropdown
         const profileTrigger = document.getElementById('profile-trigger');
         const profileContainer = document.getElementById('profile-container');
-        profileTrigger.onclick = (e) => {
-            e.stopPropagation();
-            profileContainer.classList.toggle('dropdown-active');
-        };
+        profileTrigger.onclick = (e) => { e.stopPropagation(); profileContainer.classList.toggle('dropdown-active'); };
         window.onclick = () => profileContainer.classList.remove('dropdown-active');
 
-        // Notifications
-        function showNotif(m) {
-            const n = document.getElementById('notification');
-            document.getElementById('notif-text').innerText = m;
-            n.classList.remove('translate-y-32', 'opacity-0');
-            setTimeout(() => n.classList.add('translate-y-32', 'opacity-0'), 2500);
-        }
+        function showNotif(m) { const n = document.getElementById('notification'); document.getElementById('notif-text').innerText = m; n.classList.remove('translate-y-32','opacity-0'); setTimeout(() => n.classList.add('translate-y-32','opacity-0'), 2500); }
 
-        // Chart
         function initChart() {
             const isDark = document.documentElement.classList.contains('dark');
             const ctx = document.getElementById('statsChart').getContext('2d');
-            statsChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Capital', 'Withdrawal', 'Income', 'Expense', 'Debt', 'Repayment'],
-                    datasets: [{
-                        data: [0, 0, 0, 0, 0, 0],
-                        backgroundColor: ['#a855f7', '#818cf8', '#10b981', '#ef4444', '#f59e0b', '#06b6d4'],
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { display: false }, ticks: { display: false } },
-                        y: { grid: { display: false }, ticks: { color: isDark ? '#94a3b8' : '#64748b' } }
-                    }
-                }
-            });
+            statsChart = new Chart(ctx, { type: 'bar', data: { labels: ['Capital','Withdrawal','Income','Expense','Debt','Repayment'], datasets: [{ data: [0,0,0,0,0,0], backgroundColor: ['#a855f7','#818cf8','#10b981','#ef4444','#f59e0b','#06b6d4'], borderRadius: 8 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { display: false } }, y: { grid: { display: false }, ticks: { color: isDark ? '#94a3b8' : '#64748b' } } } } });
         }
 
         window.onload = init;
     </script>
 </body>
-</html>
+                    </html>
