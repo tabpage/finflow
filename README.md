@@ -1,109 +1,143 @@
-Fin Flow - Smart Finance Tracker
+# Fin Flow
 
-Fin Flow is a lightweight, high-performance personal finance management tool built for the modern web. It features a sophisticated "glassmorphism" interface designed to help users track capital, income, expenses, withdrawals, and debts with real-time visual analytics and robust local security.
+A sleek, client-side personal finance tracker that runs entirely in your browser.  
+Track income, expenses, capital, withdrawals, debts, and repayments — all with a clean UI and powerful filtering, right-click editing, PDF reports, and local data protection.
 
-🔗 Live Demo
+🌐 **Live demo:** [tabpage.github.io/finflow](http://tabpage.github.io/finflow/)
 
-Access the application online here: https://tabpage.github.io/finflow/
+![Fin Flow Screenshot](https://via.placeholder.com/800x400?text=Fin+Flow+Screenshot)  
+*(Add an actual screenshot if desired)*
 
+---
 
-✨ Key Features
+## ✨ Features
 
-📊 Real-Time Analytics
+- **Add & categorise transactions**  
+  Description, category, amount, date, time, and transaction type (Capital, Withdrawal, Income, Expense, Debt, Repayment).
 
-Dynamic Bar Chart: Powered by Chart.js, providing an instant visual breakdown of your financial distribution (Capital, Withdraw, Income, Expense, Debt).
+- **Real‑time dashboard**  
+  See totals for each category, net balance, and a horizontal bar chart.
 
-Live Summaries: Total Balance, Income, and Expense cards update instantly with every transaction.
+- **Powerful history filtering**  
+  Search by description, category, date, or type — in any combination. The balance label updates dynamically to reflect your active filters.
 
-🛡️ Enhanced Security
+- **Easy editing**  
+  Right‑click (desktop) or long‑press (mobile/tablet) any entry to edit its description, category, or amount.  
+  Delete entries instantly with the × button.
 
-PIN Protection: Secure your financial data with a custom 4-digit PIN.
+- **Dark / light theme**  
+  Toggle between modes with a single click. Your preference is saved locally.
 
-Privacy Lock: Toggle "Privacy Mode" to blur your sensitive balances or use "Lock Now" to protect the entire application session.
+- **Local security lock**  
+  Set a password to protect your financial data. After locking, you must enter the password to regain access.  
+  *Data is never sent anywhere — everything lives in your browser.*
 
-Session Management: The app intelligently handles login states to keep your data private.
+- **Export & import**  
+  - **JSON backup** – export all transactions to a .json file and import it later.  
+  - **PDF report** – generate a professional report with summary totals and the filtered transaction list. The PDF respects your active filters.
 
-🌓 Modern UI/UX
+- **Fully responsive**  
+  Designed to work on desktops, tablets, and phones.
 
-Adaptive Theme: Toggle between Light and Dark modes with a single click.
+- **Zero dependencies on a server**  
+  Works offline once loaded. All assets are delivered via CDN.
 
-Mobile First: Fully responsive layout using Tailwind CSS, optimized for both desktop and mobile touch interactions.
+---
 
-Glassmorphism Design: A premium look with blurred backgrounds, smooth transitions, and Noto Sans typography.
+## 🛠️ Technology Stack
 
-📑 Data & Portability
+| Component         | Technology                                 |
+| ----------------- | ------------------------------------------ |
+| Frontend          | Vanilla HTML, CSS, JavaScript              |
+| Styling           | [Tailwind CSS](https://tailwindcss.com/) (CDN) |
+| Charts            | [Chart.js](https://www.chartjs.org/) (CDN) |
+| PDF generation    | [jsPDF](https://github.com/parallax/jsPDF) + [AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) (CDN) |
+| Data persistence  | `localStorage` & `sessionStorage`          |
 
-Transaction History: Filterable history by date with the ability to delete individual entries.
+---
 
-PDF Export: Generate professional, structured reports of your financial summary and transaction history using jsPDF and AutoTable.
+## 🚀 Getting Started
 
-Local Persistence: Data is stored locally in your browser (localStorage), meaning no account is required and your data never leaves your device.
+1. **Download or clone** the repository.
+2. Open `index.html` in any modern web browser.
+3. That’s it! No build tools, no server, no installation.
 
-🛠️ Technical Stack
+> **Note:** If you open the file directly (`file://` protocol) some browser security features (like certain import/export behaviours) may be slightly restricted. For the best experience, serve the file using a simple HTTP server (e.g., `python -m http.server 8000` or the **Live Server** extension in VS Code).
 
-Framework: Vanilla HTML5 & JavaScript
+---
 
-Styling: Tailwind CSS (Custom Dark Mode & Glassmorphism)
+## 📖 Usage
 
-Charts: Chart.js
+### Adding a Transaction
+1. Fill in **Description**, **Category** (e.g., “Groceries”, “Freelance”), **Amount**.
+2. Adjust the date and time if needed (defaults to now).
+3. Choose a **Type** from the dropdown.
+4. Click **Save Entry**. The new transaction appears in the history list and stats update instantly.
 
-PDF Generation: jsPDF & jsPDF-AutoTable
+### Filtering & Searching
+- **Search description** – type in the “Search description…” field.
+- **Filter by category** – use the “Filter category…” input.
+- **Filter by date** – pick a date; only transactions from that day will be shown.
+- **Filter by type** – select a specific type (e.g., only expenses).
+- All filters combine. The balance label will reflect the active filters.  
+- Click **Show All** to clear all filters.
 
-Typography: Google Fonts (Noto Sans)
+### Editing an Entry
+- **Desktop:** right‑click an item in the history.
+- **Mobile/tablet:** long‑press (hold for ~600ms) the item.
+- A modal will open where you can change the description, category, or amount. Click **Save Changes**.
 
-🚀 Getting Started
+### Exporting Data
+- **JSON Backup** – click the profile menu (top left, “Local Storage Mode”), then **Export Backup (.json)**.
+- **PDF Report** – click the **Export PDF** button in the same menu. The report respects your current filters.
 
-Since Fin Flow is a client-side application, setup is instant:
+### Importing Data
+- Click **Import Backup (.json)** in the profile menu and select a previously exported .json file.
 
-Visit the Live Site: tabpage.github.io/finflow/
+### Security
+- **Set a password** – click the profile menu → **Setup Password**.
+- **Lock the app** – click **Lock Now** or simply refresh the page (the lock screen will appear).
+- To unlock, enter the password you set.  
+  *If you forget the password, you can use the **Reset App** button on the lock screen to erase all data and start fresh.*
 
-Local Setup: - Clone this repository or download the index.html.
+---
 
-Open index.html in any modern web browser.
+## 🗄️ Data Storage & Privacy
 
-Setup Security: Click the profile icon in the top-left to "Setup PIN" and secure your local storage.
+All transactions and settings are stored in your browser’s `localStorage` under the keys `bp_transactions`, `bp_pin`, and `bp_theme`.  
+The unlock status is held in `sessionStorage` and cleared when the browser tab is closed.
 
-📖 Usage Guide
+No data is ever sent to any server. This makes Fin Flow **100% private** — but also means that if you clear your browser storage or use a different device, your data will be gone unless you’ve exported a backup.
 
-1. Setting up Security
+---
 
-Open the Sidebar Menu (Top-Left Profile Icon).
+## ⚙️ Customisation
 
-Select Setup PIN.
+You can easily tweak the app:
 
-Enter a 4-digit code. You will now be prompted for this code whenever you revisit the site.
+- **Colours & theme** – edit the Tailwind classes directly in the HTML.  
+- **Chart appearance** – modify the `initChart()` function in the `<script>` tag.  
+- **PDF report design** – adjust the `exportPdfBtn.onclick` handler.
 
-2. Managing Transactions
+Everything is self‑contained, so changes take effect immediately.
 
-Use the New Entry form to add data.
+---
 
-Categories:
+## 📄 License
 
-Capital: Your starting or base funds.
+This project is provided as open‑source. Feel free to use, modify, and distribute it.  
+*(Consider adding a formal license like MIT if you wish.)*
 
-Income/Expense: Daily flow of money.
+---
 
-Withdraw/Debt: Tracking specific transfers or liabilities.
+## 🙏 Acknowledgements
 
-3. Exporting Reports
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Chart.js](https://www.chartjs.org/)
+- [jsPDF](https://github.com/parallax/jsPDF)
+- [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable)
+- Font: [Noto Sans](https://fonts.google.com/specimen/Noto+Sans) from Google Fonts
 
-Click Export Report (PDF) in the sidebar.
+---
 
-The app generates a clean PDF document including your current balance overview and a detailed table of all logged transactions.
-
-4. Resetting the App
-
-If you wish to wipe all data or reset your PIN, use the Reset App link on the Lock Screen.
-
-Note: This action is permanent and clears all browser local storage for this app.
-
-📂 File Structure
-
-finflow/
-├── index.html          # Core Application (Logic, UI, and Styles)
-└── README.md           # Documentation
-
-
-📝 License
-
-This project is open-source. Feel free to fork, modify, and adapt it for your personal use.
+**Enjoy tracking your finances with Fin Flow!** 🚀
