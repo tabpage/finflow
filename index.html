@@ -4,15 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fin Flow</title>
-    <link rel="icon" type="image/png" href="Icon.png">
-    <script src="https://cdn.tailwindcss.com">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js">
-    </script>
+    <link class="rounded-full" rel="icon" type="image/png" href="Icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script>
         tailwind.config = { darkMode: 'class' }
     </script>
@@ -221,7 +217,7 @@
                                 <div id="categories-submenu" class="categories-submenu absolute left-full top-0 ml-1 w-52 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-700 z-[101] py-1 max-h-72 overflow-hidden flex flex-col">
                                     <div class="flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-slate-700 shrink-0">
                                         <span class="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider">All Categories</span>
-                                        <button id="add-category-btn" title="Add new category" class="w-6 h-6 flex items-center justify-center rounded-full bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 hover:bg-violet-200 dark:hover:bg-violet-900 transition-colors text-lg leading-none font-bold shrink-0">+</button>
+                                        <button id="add-category-btn" type="button" title="Add new category" class="w-6 h-6 flex items-center justify-center rounded-full bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 hover:bg-violet-200 dark:hover:bg-violet-900 transition-colors text-lg leading-none font-bold shrink-0">+</button>
                                     </div>
                                     <div id="categories-list-container" class="overflow-y-auto custom-scrollbar flex-1 py-1">
                                     </div>
@@ -417,9 +413,6 @@
         let activeFilterType = '';
         let activeSearchText = '';
         let activeCategoryFilter = '';
-        let submenuHideTimeout = null;
-        let isSubmenuHovered = false;
-        let isCategoriesTriggerHovered = false;
 
         let longPressTimer = null;
         let longPressStartX = 0,
@@ -581,7 +574,7 @@
                         e.preventDefault();
                         categoryInput.value = cat;
                         categoryInput.focus();
-                        hideCategoriesSubmenu();
+                        categoriesSubmenu.classList.remove('visible');
                         profileContainer.classList.remove('dropdown-active');
                         showNotif(`Category "${cat}" selected!`);
                     });
@@ -592,47 +585,25 @@
             updateCategoryDatalists();
         }
 
-        function showCategoriesSubmenu() {
-            clearTimeout(submenuHideTimeout);
-            categoriesSubmenu.classList.add('visible');
-            renderCategoriesSubmenu();
-        }
-
-        function hideCategoriesSubmenu() {
-            clearTimeout(submenuHideTimeout);
-            submenuHideTimeout = setTimeout(() => {
-                if (!isSubmenuHovered && !isCategoriesTriggerHovered) {
-                    categoriesSubmenu.classList.remove('visible');
-                }
-            }, 200);
-        }
-
         function setupCategoriesSubmenu() {
-            categoriesTriggerBtn.addEventListener('mouseenter', () => {
-                isCategoriesTriggerHovered = true;
-                showCategoriesSubmenu();
-            });
-            categoriesTriggerBtn.addEventListener('mouseleave', () => {
-                isCategoriesTriggerHovered = false;
-                hideCategoriesSubmenu();
-            });
+            // Clicking Categories trigger button will toggle the visibility
             categoriesTriggerBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (categoriesSubmenu.classList.contains('visible')) {
-                    hideCategoriesSubmenu();
+                e.preventDefault();
+                const isVisible = categoriesSubmenu.classList.contains('visible');
+                if (isVisible) {
+                    categoriesSubmenu.classList.remove('visible');
                 } else {
-                    showCategoriesSubmenu();
+                    categoriesSubmenu.classList.add('visible');
+                    renderCategoriesSubmenu();
                 }
             });
-            categoriesSubmenu.addEventListener('mouseenter', () => {
-                isSubmenuHovered = true;
-                clearTimeout(submenuHideTimeout);
-                categoriesSubmenu.classList.add('visible');
+
+            // Prevent clicks inside categories submenu from bubble-closing
+            categoriesSubmenu.addEventListener('click', (e) => {
+                e.stopPropagation();
             });
-            categoriesSubmenu.addEventListener('mouseleave', () => {
-                isSubmenuHovered = false;
-                hideCategoriesSubmenu();
-            });
+
             addCategoryBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -648,11 +619,6 @@
                     } else {
                         showNotif('Category already exists!');
                     }
-                }
-            });
-            window.addEventListener('click', () => {
-                if (!isSubmenuHovered && !isCategoriesTriggerHovered) {
-                    categoriesSubmenu.classList.remove('visible');
                 }
             });
         }
@@ -817,7 +783,8 @@
                 else if (t.type === 'repayment') repayment += a;
             });
 
-            const totalBalance = (income + capital) - (expense + withdrawal + repayment);
+            // corrected accounting balance formula: debt is an inflow, repayment is an outflow.
+            const totalBalance = (income + capital + debt) - (expense + withdrawal + repayment);
 
             document.getElementById('total-income').innerText = income.toFixed(2);
             document.getElementById('total-expense').innerText = expense.toFixed(2);
@@ -991,7 +958,7 @@
                 else if (t.type === 'capital') c += a;
                 else if (t.type === 'drawings') dr += a;
                 else if (t.type === 'repayment') rp += a; });
-            const bal = (i + c) - (e + dr + rp);
+            const bal = (i + c + d) - (e + dr + rp);
             doc.autoTable({ startY: 40, head: [
                     ['Capital', 'Withdrawal', 'Income', 'Expense', 'Debt', 'Repayment', 'Net Balance']
                 ], body: [
@@ -1109,6 +1076,7 @@
                 categoriesSubmenu.classList.remove('visible');
             }
         };
+        
         window.addEventListener('click', (e) => {
             if (!profileContainer.contains(e.target)) {
                 profileContainer.classList.remove('dropdown-active');
@@ -1137,8 +1105,13 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { x: { grid: { display: false }, ticks: { display: false } }, y: { grid: { display: false },
-                            ticks: { color: isDark ? '#94a3b8' : '#64748b' } } }
+                    scales: { 
+                        x: { grid: { display: false }, ticks: { display: false } }, 
+                        y: { 
+                            grid: { display: false },
+                            ticks: { color: isDark ? '#94a3b8' : '#64748b' } 
+                        } 
+                    }
                 }
             });
         }
