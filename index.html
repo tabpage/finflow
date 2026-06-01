@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fin Flow</title>
+    <title>Finova</title>
     <link class="rounded-full" rel="icon" type="image/png" href="Icon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -191,7 +191,7 @@
     <div id="main-app" class="max-w-7xl mx-auto px-4 py-8">
         <header class="mb-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div class="flex flex-col gap-4">
-                <h1 class="text-4xl font-black text-indigo-950 dark:text-white">Fin <span class="text-indigo-600">Flow</span></h1>
+                <h1 class="text-4xl font-black text-indigo-950 dark:text-white">Fin<span class="text-indigo-600">ova</span></h1>
                 <div class="flex items-center gap-3">
                     <div id="profile-container" class="relative inline-block">
                         <button id="profile-trigger" class="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-all">
@@ -227,7 +227,6 @@
                                 </div>
                             </div>
 
-                            <!-- NEW: Export/Import Categories buttons -->
                             <button id="export-categories-btn" class="w-full text-left px-4 py-2 text-xs font-bold text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900/20">Export Categories (.json)</button>
                             <button id="import-categories-btn" class="w-full text-left px-4 py-2 text-xs font-bold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20">Import Categories (.json)</button>
                             <input type="file" id="categories-file-input" class="hidden" accept=".json">
@@ -460,7 +459,6 @@
         const categorySuggestionsEdit = document.getElementById('category-suggestions-edit');
         const profileContainer = document.getElementById('profile-container');
 
-        // NEW elements for categories export/import
         const exportCategoriesBtn = document.getElementById('export-categories-btn');
         const importCategoriesBtn = document.getElementById('import-categories-btn');
         const categoriesFileInput = document.getElementById('categories-file-input');
@@ -596,7 +594,6 @@
         }
 
         function setupCategoriesSubmenu() {
-            // Clicking Categories trigger button will toggle the visibility
             categoriesTriggerBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -609,7 +606,6 @@
                 }
             });
 
-            // Prevent clicks inside categories submenu from bubble-closing
             categoriesSubmenu.addEventListener('click', (e) => {
                 e.stopPropagation();
             });
@@ -793,7 +789,6 @@
                 else if (t.type === 'repayment') repayment += a;
             });
 
-            // corrected accounting balance formula: debt is an inflow, repayment is an outflow.
             const totalBalance = (income + capital + debt) - (expense + withdrawal + repayment);
 
             document.getElementById('total-income').innerText = income.toFixed(2);
@@ -887,7 +882,7 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `fin_flow_backup_${new Date().toISOString().split('T')[0]}.json`;
+            link.download = `finova_backup_${new Date().toISOString().split('T')[0]}.json`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -916,14 +911,13 @@
             reader.readAsText(file);
         };
 
-        // NEW: Export Categories
         exportCategoriesBtn.onclick = () => {
             const dataStr = JSON.stringify(customCategories, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `fin_flow_categories_${new Date().toISOString().split('T')[0]}.json`;
+            link.download = `finova_categories_${new Date().toISOString().split('T')[0]}.json`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -931,7 +925,6 @@
             showNotif("Categories Exported!");
         };
 
-        // NEW: Import Categories
         importCategoriesBtn.onclick = () => categoriesFileInput.click();
         categoriesFileInput.onchange = (e) => {
             const file = e.target.files[0];
@@ -998,7 +991,7 @@
                 doc.rect(0, 0, 210, 297, 'F'); }
             doc.setFontSize(24);
             doc.setTextColor(...theme.header);
-            doc.text("Fin Flow - Financial Report", 14, 20);
+            doc.text("Finova - Financial Report", 14, 20);
             doc.setFontSize(10);
             doc.setTextColor(...theme.subText);
             let reportDateText = `Generated: ${new Date().toLocaleString()}`;
@@ -1048,7 +1041,7 @@
                         255
                     ], textColor: isDark ? [255, 255, 255] : [30, 41, 59] }, alternateRowStyles: { fillColor: isDark ?
                         [15, 23, 42] : [241, 245, 249] }, styles: { font: 'helvetica', fontSize: 10 } });
-            let fileName = `fin_flow_report_${new Date().toISOString().split('T')[0]}`;
+            let fileName = `finova_report_${new Date().toISOString().split('T')[0]}`;
             if (activeFilterDate) fileName += `_filtered_${activeFilterDate}`;
             if (activeFilterType) fileName += `_${activeFilterType}`;
             if (activeSearchText.trim() !== '') fileName += `_search_${activeSearchText}`;
