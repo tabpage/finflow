@@ -227,6 +227,11 @@
                                 </div>
                             </div>
 
+                            <!-- NEW: Export/Import Categories buttons -->
+                            <button id="export-categories-btn" class="w-full text-left px-4 py-2 text-xs font-bold text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900/20">Export Categories (.json)</button>
+                            <button id="import-categories-btn" class="w-full text-left px-4 py-2 text-xs font-bold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20">Import Categories (.json)</button>
+                            <input type="file" id="categories-file-input" class="hidden" accept=".json">
+
                             <hr class="my-2 border-gray-50 dark:border-slate-700">
                             <div class="px-2">
                                 <button id="export-pdf-btn" class="w-full flex items-center justify-center gap-2 px-4 py-3 text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100">
@@ -454,6 +459,11 @@
         const categorySuggestions = document.getElementById('category-suggestions');
         const categorySuggestionsEdit = document.getElementById('category-suggestions-edit');
         const profileContainer = document.getElementById('profile-container');
+
+        // NEW elements for categories export/import
+        const exportCategoriesBtn = document.getElementById('export-categories-btn');
+        const importCategoriesBtn = document.getElementById('import-categories-btn');
+        const categoriesFileInput = document.getElementById('categories-file-input');
 
         function init() {
             setNow();
@@ -901,6 +911,61 @@
                         }
                     } else { showNotif("Invalid backup format"); }
                 } catch (err) { showNotif("Error reading file"); }
+                e.target.value = '';
+            };
+            reader.readAsText(file);
+        };
+
+        // NEW: Export Categories
+        exportCategoriesBtn.onclick = () => {
+            const dataStr = JSON.stringify(customCategories, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `fin_flow_categories_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showNotif("Categories Exported!");
+        };
+
+        // NEW: Import Categories
+        importCategoriesBtn.onclick = () => categoriesFileInput.click();
+        categoriesFileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const imported = JSON.parse(event.target.result);
+                    if (Array.isArray(imported) && imported.every(item => typeof item === 'string')) {
+                        if (imported.length === 0) {
+                            showNotif("No categories in file.");
+                            return;
+                        }
+                        const replace = confirm("Do you want to replace all existing categories with the imported ones? Press Cancel to merge instead.");
+                        if (replace) {
+                            customCategories = imported.filter(c => c.trim().length > 0);
+                        } else {
+                            imported.forEach(c => {
+                                const trimmed = c.trim();
+                                if (trimmed && !customCategories.includes(trimmed)) {
+                                    customCategories.push(trimmed);
+                                }
+                            });
+                        }
+                        saveCustomCategories();
+                        renderCategoriesSubmenu();
+                        updateCategoryDatalists();
+                        showNotif("Categories imported successfully!");
+                    } else {
+                        showNotif("Invalid categories file format.");
+                    }
+                } catch (err) {
+                    showNotif("Error reading categories file.");
+                }
                 e.target.value = '';
             };
             reader.readAsText(file);
