@@ -5,8 +5,6 @@ Track income, expenses, capital, withdrawals, debts, and repayments — all with
 
 🌐 **Live demo:** [tabpage.github.io/finflow](http://tabpage.github.io/finflow/)
 
-![Fin Flow Screenshot](https://via.placeholder.com/800x400?text=Fin+Flow+Screenshot)  
-*(Add an actual screenshot if desired)*
 
 ---
 
