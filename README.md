@@ -1,9 +1,9 @@
-# Fin Flow
+# Finova
 
 A sleek, client-side personal finance tracker that runs entirely in your browser.  
 Track income, expenses, capital, withdrawals, debts, and repayments — all with a clean UI and powerful filtering, right-click editing, PDF reports, and local data protection.
 
-🌐 **Live demo:** [tabpage.github.io/finflow](http://tabpage.github.io/finflow/)
+🌐 **Live demo:** [tabpage.github.io/finova](http://tabpage.github.io/finova/)
 
 
 ---
