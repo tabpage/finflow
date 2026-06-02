@@ -1,24 +1,45 @@
-# Finova
 
-A sleek, client-side personal finance tracker that runs entirely in your browser.  
-Track income, expenses, capital, withdrawals, debts, and repayments — all with a clean UI and powerful filtering, right-click editing, PDF reports, and local data protection.
-
-🌐 **Live demo:** [tabpage.github.io/finova](http://tabpage.github.io/finova/)
-
+Everything is self‑contained in a single file for maximum portability.
 
 ---
 
-## ✨ Features
+## 🤝 Contributing
 
-- **Add & categorise transactions**  
-  Description, category, amount, date, time, and transaction type (Capital, Withdrawal, Income, Expense, Debt, Repayment).
+Pull requests are welcome! If you have ideas for new features (like multiple accounts, recurring transactions, or CSV export), feel free to open an issue or fork the repo.
 
-- **Real‑time dashboard**  
-  See totals for each category, net balance, and a horizontal bar chart.
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-- **Powerful history filtering**  
-  Search by description, category, date, or type — in any combination. The balance label updates dynamically to reflect your active filters.
+---
 
+## 📜 License
+
+Distributed under the **MIT License**. See `LICENSE` for more information.
+
+---
+
+## 🙌 Acknowledgements
+
+- [Tailwind CSS](https://tailwindcss.com/) for the beautiful utility classes
+- [Chart.js](https://www.chartjs.org/) for effortless charting
+- [jsPDF](https://github.com/parallax/jsPDF) & [AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) for PDF magic
+- [Google Fonts](https://fonts.google.com/) – Noto Sans
+
+---
+
+## 💬 Contact
+
+**Finova** is crafted with ❤️ by [Your Name]  
+GitHub: [@your-username](https://github.com/your-username)
+
+If you enjoy using Finova, drop a ⭐️ on the repo – it fuels the engine!
+
+---
+
+> *“Financial clarity, served in a dark‑themed, pixel‑perfect interface.”*
 - **Easy editing**  
   Right‑click (desktop) or long‑press (mobile/tablet) any entry to edit its description, category, or amount.  
   Delete entries instantly with the × button.
