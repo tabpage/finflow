@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finova</title>
-    <link class="rounded-full" rel="icon" type="image/png" href="Icon.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <link rel="icon" type="image/png" href="Icon.png">
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js">
+    </script>
     <script>
         tailwind.config = { darkMode: 'class' }
     </script>
@@ -172,7 +176,6 @@
     </div>
 
     <div id="lock-screen" class="hidden fixed inset-0 z-[110] flex items-center justify-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-4">
-        <!-- FIX: max-sm replaced with max-w-sm -->
         <div class="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl w-full max-w-sm border border-gray-200 dark:border-slate-700 text-center animate-fadeIn">
             <div class="mb-6">
                 <div class="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -212,7 +215,7 @@
 
                             <div id="categories-menu-wrapper" class="relative">
                                 <button id="categories-trigger-btn" class="w-full text-left px-4 py-2 text-xs font-bold text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 flex items-center justify-between">
-                                    <span>📂 Categories</span>
+                                    <span>Categories</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                                 </button>
                                 <div id="categories-submenu" class="categories-submenu absolute left-full top-0 ml-1 w-52 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-700 z-[101] py-1 max-h-72 overflow-hidden flex flex-col">
@@ -300,7 +303,7 @@
                     <form id="transaction-form" class="space-y-4">
                         <input type="text" id="text" placeholder="Description" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm dark:text-white dark:placeholder-slate-400" required>
                         <div class="relative">
-                            <input type="text" id="category" list="category-suggestions" placeholder="Category (e.g., Groceries, Rent, Salary)" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm dark:text-white dark:placeholder-slate-400" required autocomplete="off">
+                            <input type="text" id="category" list="category-suggestions" placeholder="Category" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm dark:text-white dark:placeholder-slate-400" autocomplete="off">
                             <datalist id="category-suggestions"></datalist>
                         </div>
                         <input type="number" id="amount" step="any" min="0" placeholder="Amount" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm font-black dark:text-white" required>
@@ -362,7 +365,7 @@
     <div id="context-hint" class="context-hint">Edit Entry</div>
 
     <div id="confirm-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-[2.5rem] shadow-2xl w-full max-xs text-center border border-gray-100 dark:border-slate-700">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-[2.5rem] shadow-2xl w-full max-w-xs text-center border border-gray-100 dark:border-slate-700">
             <h3 class="text-lg font-black text-indigo-950 dark:text-white mb-2">Clear History?</h3>
             <p class="text-xs text-gray-500 dark:text-slate-400 mb-6 leading-relaxed px-4">This will permanently delete all your transaction entries locally. This action cannot be undone.</p>
             <div class="flex gap-3">
@@ -390,7 +393,7 @@
                 </div>
                 <div>
                     <label class="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-1 block">Category</label>
-                    <input type="text" id="edit-category" list="category-suggestions-edit" placeholder="Category" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm dark:text-white dark:placeholder-slate-400 font-bold" required autocomplete="off">
+                    <input type="text" id="edit-category" list="category-suggestions-edit" placeholder="Category" class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-none rounded-2xl text-sm dark:text-white dark:placeholder-slate-400 font-bold" autocomplete="off">
                     <datalist id="category-suggestions-edit"></datalist>
                 </div>
                 <div>
@@ -585,7 +588,7 @@
                         categoryInput.focus();
                         categoriesSubmenu.classList.remove('visible');
                         profileContainer.classList.remove('dropdown-active');
-                        showNotif(`Category "${cat}" selected!`);
+                        showNotif(`Category "${cat}" filled!`);
                     });
                     btn.title = `Click to fill: ${cat}`;
                     categoriesListContainer.appendChild(btn);
@@ -732,10 +735,12 @@
             const newText = document.getElementById('edit-text').value.trim();
             const newCategory = document.getElementById('edit-category').value.trim();
             const newAmount = parseFloat(document.getElementById('edit-amount').value);
-            if (!newText || !newCategory || isNaN(newAmount) || newAmount <= 0) {
-                showNotif("Please enter valid description, category, and positive amount");
+
+            if (!newText || isNaN(newAmount) || newAmount <= 0) {
+                showNotif("Please enter a valid description and positive amount");
                 return;
             }
+
             txn.text = newText;
             txn.category = newCategory;
             txn.amount = newAmount;
@@ -939,7 +944,9 @@
                             showNotif("No categories in file.");
                             return;
                         }
-                        const replace = confirm("Do you want to replace all existing categories with the imported ones? Press Cancel to merge instead.");
+                        const replace = confirm(
+                            "Do you want to replace all existing categories with the imported ones? Press Cancel to merge instead."
+                            );
                         if (replace) {
                             customCategories = imported.filter(c => c.trim().length > 0);
                         } else {
@@ -1057,8 +1064,6 @@
             if (isNaN(amountVal) || amountVal <= 0) { showNotif("Amount must be a positive number");
                 return; }
             const categoryVal = document.getElementById('category').value.trim();
-            if (!categoryVal) { showNotif("Please enter a category");
-                return; }
             const data = {
                 id: crypto.randomUUID(),
                 text: document.getElementById('text').value,
@@ -1135,7 +1140,7 @@
                 categoriesSubmenu.classList.remove('visible');
             }
         };
-        
+
         window.addEventListener('click', (e) => {
             if (!profileContainer.contains(e.target)) {
                 profileContainer.classList.remove('dropdown-active');
@@ -1164,12 +1169,12 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { 
-                        x: { grid: { display: false }, ticks: { display: false } }, 
-                        y: { 
+                    scales: {
+                        x: { grid: { display: false }, ticks: { display: false } },
+                        y: {
                             grid: { display: false },
-                            ticks: { color: isDark ? '#94a3b8' : '#64748b' } 
-                        } 
+                            ticks: { color: isDark ? '#94a3b8' : '#64748b' }
+                        }
                     }
                 }
             });
