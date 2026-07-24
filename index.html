@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Finova</title>
-    <link rel="icon" type="image/png" href="Icon.png">
+    <link rel="icon" type="image/png" href="Icon.png" />
     <script src="https://cdn.tailwindcss.com">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js">
@@ -164,6 +164,20 @@
             opacity: 1;
             transform: translateX(0);
         }
+
+        /* small tweak for the new category pdf selector */
+        #pdf-category-select {
+            appearance: auto;
+            -webkit-appearance: auto;
+        }
+        #pdf-category-select option {
+            background: #fff;
+            color: #1e293b;
+        }
+        .dark #pdf-category-select option {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
     </style>
 </head>
 <body class="antialiased text-gray-800 bg-slate-50 dark:bg-slate-950 dark:text-slate-200">
@@ -236,6 +250,20 @@
                             <input type="file" id="categories-file-input" class="hidden" accept=".json">
 
                             <hr class="my-2 border-gray-50 dark:border-slate-700">
+
+                            <!-- ─── NEW: Category PDF Export Section ─── -->
+                            <div class="px-3 py-2">
+                                <label class="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider block mb-2">Export Category PDF</label>
+                                <div class="flex gap-1.5">
+                                    <select id="pdf-category-select" class="flex-1 px-2 py-2 bg-gray-50 dark:bg-slate-700 border-none rounded-xl text-[11px] font-bold dark:text-white focus:ring-2 focus:ring-indigo-400 cursor-pointer">
+                                        <option value="">All Categories</option>
+                                    </select>
+                                    <button id="export-category-pdf-btn" class="px-3 py-2 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-indigo-700 transition-all shadow-md active:scale-95 shrink-0">Export</button>
+                                </div>
+                            </div>
+
+                            <hr class="my-2 border-gray-50 dark:border-slate-700">
+
                             <div class="px-2">
                                 <button id="export-pdf-btn" class="w-full flex items-center justify-center gap-2 px-4 py-3 text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
@@ -467,6 +495,10 @@
         const importCategoriesBtn = document.getElementById('import-categories-btn');
         const categoriesFileInput = document.getElementById('categories-file-input');
 
+        // ─── NEW: Category PDF selector elements ───
+        const pdfCategorySelect = document.getElementById('pdf-category-select');
+        const exportCategoryPdfBtn = document.getElementById('export-category-pdf-btn');
+
         function init() {
             setNow();
             initTheme();
@@ -476,6 +508,7 @@
             checkLockStatus();
             refreshUI();
             updateCategoryDatalists();
+            populatePdfCategorySelect();
         }
 
         function setNow() {
@@ -565,6 +598,23 @@
             categorySuggestionsEdit.innerHTML = optionsHTML;
         }
 
+        // ─── Populate the PDF category selector ───
+        function populatePdfCategorySelect() {
+            const allCats = getAllCategories();
+            const currentVal = pdfCategorySelect.value;
+            pdfCategorySelect.innerHTML = '<option value="">All Categories</option>';
+            allCats.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                pdfCategorySelect.appendChild(opt);
+            });
+            // try to restore previous selection
+            if (currentVal && allCats.includes(currentVal)) {
+                pdfCategorySelect.value = currentVal;
+            }
+        }
+
         function renderCategoriesSubmenu() {
             const allCats = getAllCategories();
             categoriesListContainer.innerHTML = '';
@@ -595,6 +645,7 @@
                 });
             }
             updateCategoryDatalists();
+            populatePdfCategorySelect();
         }
 
         function setupCategoriesSubmenu() {
@@ -625,6 +676,7 @@
                         saveCustomCategories();
                         renderCategoriesSubmenu();
                         updateCategoryDatalists();
+                        populatePdfCategorySelect();
                         showNotif(`Category "${trimmed}" added!`);
                     } else {
                         showNotif('Category already exists!');
@@ -747,6 +799,7 @@
             localStorage.setItem('bp_transactions', JSON.stringify(transactions));
             refreshUI();
             updateCategoryDatalists();
+            populatePdfCategorySelect();
             closeEditModal();
             showNotif("Entry Updated!");
         }
@@ -859,6 +912,7 @@
 
             localStorage.setItem('bp_transactions', JSON.stringify(transactions));
             updateCategoryDatalists();
+            populatePdfCategorySelect();
             if (shouldScrollToBottom) {
                 setTimeout(() => { listContainer.scrollTop = listContainer.scrollHeight; }, 100);
             }
@@ -960,6 +1014,7 @@
                         saveCustomCategories();
                         renderCategoriesSubmenu();
                         updateCategoryDatalists();
+                        populatePdfCategorySelect();
                         showNotif("Categories imported successfully!");
                     } else {
                         showNotif("Invalid categories file format.");
@@ -972,6 +1027,173 @@
             reader.readAsText(file);
         };
 
+        // ─── Shared PDF generation logic ──────────────────────────────────────
+        function generatePdf(data, title, fileNameBase) {
+            if (!data || data.length === 0) {
+                showNotif("No data available for report!");
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const isDark = document.documentElement.classList.contains('dark');
+            const theme = isDark ? { bg: [15, 23, 42], header: [79, 70, 229], text: [255, 255, 255], subText: [148,
+                    163, 184
+                ], tableHead: [79, 70, 229], tableRow: [30, 41, 59] } :
+                { bg: [255, 255, 255], header: [79, 70, 229], text: [30, 41, 59], subText: [100, 116, 139],
+                    tableHead: [30, 41, 59], tableRow: [248, 250, 252] };
+
+            if (isDark) { doc.setFillColor(...theme.bg);
+                doc.rect(0, 0, 210, 297, 'F'); }
+
+            // ── Header ──
+            doc.setFontSize(24);
+            doc.setTextColor(...theme.header);
+            doc.text(title, 14, 20);
+            doc.setFontSize(10);
+            doc.setTextColor(...theme.subText);
+            let reportDateText = `Generated: ${new Date().toLocaleString()}`;
+            doc.text(reportDateText, 14, 28);
+
+            // ── Summary stats ──
+            let i = 0,
+                e = 0,
+                d = 0,
+                c = 0,
+                dr = 0,
+                rp = 0;
+            data.forEach(t => { let a = Number(t.amount) || 0; if (t.type === 'income') i +=
+                    a;
+                else if (t.type === 'expense') e += a;
+                else if (t.type === 'debt') d += a;
+                else if (t.type === 'capital') c += a;
+                else if (t.type === 'drawings') dr += a;
+                else if (t.type === 'repayment') rp += a; });
+            const bal = (i + c + d) - (e + dr + rp);
+
+            doc.autoTable({
+                startY: 40,
+                head: [
+                    ['Capital', 'Withdrawal', 'Income', 'Expense', 'Debt', 'Repayment', 'Net Balance']
+                ],
+                body: [
+                    [c.toFixed(2), dr.toFixed(2), i.toFixed(2), e.toFixed(2), d.toFixed(2), rp.toFixed(2), bal
+                        .toFixed(2)
+                    ]
+                ],
+                theme: 'grid',
+                headStyles: { fillColor: theme.header, textColor: [255, 255, 255], fontStyle: 'bold' },
+                bodyStyles: { fillColor: isDark ? [51, 65, 85] : [255, 255, 255], textColor: isDark ? [255, 255,
+                        255
+                    ] : [30, 41, 59] }
+            });
+
+            // ── Group by category ──
+            const grouped = {};
+            data.forEach(t => {
+                const cat = (t.category && t.category.trim()) ? t.category.trim() : 'Uncategorized';
+                if (!grouped[cat]) grouped[cat] = [];
+                grouped[cat].push(t);
+            });
+            const sortedCats = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
+
+            // ── Category summary table ──
+            const catSummaryData = sortedCats.map(cat => {
+                const items = grouped[cat];
+                const total = items.reduce((sum, t) => sum + t.amount, 0);
+                const count = items.length;
+                return [cat, count, total.toFixed(2)];
+            });
+
+            let yPos = doc.lastAutoTable.finalY + 12;
+            doc.setFontSize(12);
+            doc.setTextColor(...theme.text);
+            doc.text("Category Summary", 14, yPos);
+            yPos += 6;
+
+            doc.autoTable({
+                startY: yPos,
+                head: [
+                    ['Category', 'Entries', 'Total']
+                ],
+                body: catSummaryData,
+                theme: isDark ? 'grid' : 'striped',
+                headStyles: { fillColor: theme.tableHead, textColor: [255, 255, 255], fontStyle: 'bold' },
+                bodyStyles: { fillColor: isDark ? theme.tableRow : [255, 255, 255], textColor: isDark ? [255,
+                        255, 255
+                    ] : [30, 41, 59] },
+                alternateRowStyles: { fillColor: isDark ? [15, 23, 42] : [241, 245, 249] },
+                styles: { font: 'helvetica', fontSize: 10 }
+            });
+
+            yPos = doc.lastAutoTable.finalY + 14;
+
+            // ── Detailed transactions by category ──
+            sortedCats.forEach((cat) => {
+                const items = grouped[cat];
+                const total = items.reduce((sum, t) => sum + t.amount, 0);
+                const count = items.length;
+
+                if (yPos > 250) {
+                    doc.addPage();
+                    if (isDark) { doc.setFillColor(...theme.bg);
+                        doc.rect(0, 0, 210, 297, 'F'); }
+                    yPos = 20;
+                }
+
+                doc.setFontSize(11);
+                doc.setTextColor(...theme.header);
+                doc.text(`${cat}  (${count} entries)  —  Total: ${total.toFixed(2)}`, 14, yPos);
+                yPos += 6;
+
+                const tableData = items.sort((a, b) => a.createdAt - b.createdAt).map(t => [
+                    `${new Date(t.date).toLocaleDateString('en-GB')} ${t.time ? formatTime12h(t.time) : ''}`,
+                    t.text,
+                    t.type === 'drawings' ? 'WITHDRAWAL' : t.type.toUpperCase(),
+                    t.amount.toFixed(2)
+                ]);
+
+                doc.autoTable({
+                    startY: yPos,
+                    head: [
+                        ['Date & Time', 'Description', 'Type', 'Amount']
+                    ],
+                    body: tableData,
+                    theme: isDark ? 'grid' : 'striped',
+                    headStyles: { fillColor: theme.tableHead, textColor: [255, 255, 255], fontStyle: 'bold' },
+                    bodyStyles: { fillColor: isDark ? theme.tableRow : [255, 255, 255], textColor: isDark ? [
+                            255, 255, 255
+                        ] : [30, 41, 59] },
+                    alternateRowStyles: { fillColor: isDark ? [15, 23, 42] : [241, 245, 249] },
+                    styles: { font: 'helvetica', fontSize: 9 },
+                    columnStyles: {
+                        0: { cellWidth: 40 },
+                        1: { cellWidth: 'auto' },
+                        2: { cellWidth: 32 },
+                        3: { cellWidth: 28 }
+                    }
+                });
+
+                yPos = doc.lastAutoTable.finalY + 8;
+            });
+
+            // ── Grand total ──
+            const grandTotal = data.reduce((sum, t) => sum + t.amount, 0);
+            if (yPos > 270) {
+                doc.addPage();
+                if (isDark) { doc.setFillColor(...theme.bg);
+                    doc.rect(0, 0, 210, 297, 'F'); }
+                yPos = 20;
+            }
+            doc.setFontSize(11);
+            doc.setTextColor(...theme.header);
+            doc.text(`GRAND TOTAL (all categories): ${grandTotal.toFixed(2)}`, 14, yPos + 4);
+
+            doc.save(`${fileNameBase}.pdf`);
+            showNotif("PDF Exported!");
+        }
+
+        // ─── Main PDF Export (uses current filters) ──────────────────────────
         exportPdfBtn.onclick = () => {
             let filteredForReport = [...transactions];
             if (activeFilterDate) filteredForReport = filteredForReport.filter(t => t.date === activeFilterDate);
@@ -987,76 +1209,35 @@
             if (filteredForReport.length === 0) { showNotif("No data available for report!");
                 return; }
 
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const isDark = document.documentElement.classList.contains('dark');
-            const theme = isDark ? { bg: [15, 23, 42], header: [79, 70, 229], text: [255, 255, 255], subText: [148,
-                    163, 184
-                ], tableHead: [79, 70, 229], tableRow: [30, 41, 59] } :
-                { bg: [255, 255, 255], header: [79, 70, 229], text: [30, 41, 59], subText: [100, 116, 139],
-                    tableHead: [30, 41, 59], tableRow: [248, 250, 252] };
-            if (isDark) { doc.setFillColor(...theme.bg);
-                doc.rect(0, 0, 210, 297, 'F'); }
-            doc.setFontSize(24);
-            doc.setTextColor(...theme.header);
-            doc.text("Finova - Financial Report", 14, 20);
-            doc.setFontSize(10);
-            doc.setTextColor(...theme.subText);
-            let reportDateText = `Generated: ${new Date().toLocaleString()}`;
-            let filterParts = [];
-            if (activeFilterDate) filterParts.push(`Date: ${activeFilterDate}`);
-            if (activeFilterType) filterParts.push(`Type: ${activeFilterType}`);
-            if (activeSearchText.trim() !== '') filterParts.push(`Desc: "${activeSearchText}"`);
-            if (activeCategoryFilter.trim() !== '') filterParts.push(`Category: "${activeCategoryFilter}"`);
-            if (filterParts.length) reportDateText += ` | Filtered: ${filterParts.join(', ')}`;
-            doc.text(reportDateText, 14, 28);
-
-            let i = 0,
-                e = 0,
-                d = 0,
-                c = 0,
-                dr = 0,
-                rp = 0;
-            filteredForReport.forEach(t => { let a = Number(t.amount) || 0; if (t.type === 'income') i +=
-                    a;
-                else if (t.type === 'expense') e += a;
-                else if (t.type === 'debt') d += a;
-                else if (t.type === 'capital') c += a;
-                else if (t.type === 'drawings') dr += a;
-                else if (t.type === 'repayment') rp += a; });
-            const bal = (i + c + d) - (e + dr + rp);
-            doc.autoTable({ startY: 40, head: [
-                    ['Capital', 'Withdrawal', 'Income', 'Expense', 'Debt', 'Repayment', 'Net Balance']
-                ], body: [
-                    [c.toFixed(2), dr.toFixed(2), i.toFixed(2), e.toFixed(2), d.toFixed(2), rp.toFixed(2), bal
-                        .toFixed(2)
-                    ]
-                ], theme: 'grid', headStyles: { fillColor: theme.header, textColor: [255, 255, 255],
-                    fontStyle: 'bold' }, bodyStyles: { fillColor: isDark ? [51, 65, 85] : [255, 255, 255],
-                    textColor: isDark ? [255, 255, 255] : [30, 41, 59] } });
-            doc.setFontSize(14);
-            doc.setTextColor(...theme.text);
-            doc.text("Transaction History", 14, doc.lastAutoTable.finalY + 15);
-            const tableData = filteredForReport.sort((a, b) => a.createdAt - b.createdAt).map(t => [
-                `${new Date(t.date).toLocaleDateString('en-GB')} ${t.time ? formatTime12h(t.time) : ''}`,
-                t.text, t.category || '-', t.type === 'drawings' ? 'WITHDRAWAL' : t.type.toUpperCase(), t
-                .amount.toFixed(2)
-            ]);
-            doc.autoTable({ startY: doc.lastAutoTable.finalY + 20, head: [
-                    ['Date & Time', 'Description', 'Category', 'Type', 'Amount']
-                ], body: tableData, theme: isDark ? 'grid' : 'striped', headStyles: { fillColor: theme.tableHead,
-                    textColor: [255, 255, 255] }, bodyStyles: { fillColor: isDark ? theme.tableRow : [255, 255,
-                        255
-                    ], textColor: isDark ? [255, 255, 255] : [30, 41, 59] }, alternateRowStyles: { fillColor: isDark ?
-                        [15, 23, 42] : [241, 245, 249] }, styles: { font: 'helvetica', fontSize: 10 } });
             let fileName = `finova_report_${new Date().toISOString().split('T')[0]}`;
             if (activeFilterDate) fileName += `_filtered_${activeFilterDate}`;
             if (activeFilterType) fileName += `_${activeFilterType}`;
             if (activeSearchText.trim() !== '') fileName += `_search_${activeSearchText}`;
             if (activeCategoryFilter.trim() !== '') fileName += `_cat_${activeCategoryFilter}`;
-            doc.save(`${fileName}.pdf`);
-            showNotif("PDF Exported Successfully");
+
+            generatePdf(filteredForReport, "Finova - Financial Report", fileName);
         };
+
+        // ─── NEW: Export PDF for selected category ────────────────────────────
+        exportCategoryPdfBtn.onclick = () => {
+            const selectedCat = pdfCategorySelect.value;
+            if (!selectedCat) {
+                showNotif("Please select a category from the dropdown.");
+                return;
+            }
+            const filtered = transactions.filter(t =>
+                (t.category && t.category.trim().toLowerCase() === selectedCat.toLowerCase())
+            );
+            if (filtered.length === 0) {
+                showNotif(`No transactions found for category "${selectedCat}".`);
+                return;
+            }
+            const safeCat = selectedCat.replace(/[^a-zA-Z0-9]/g, '_');
+            const fileName = `finova_category_${safeCat}_${new Date().toISOString().split('T')[0]}`;
+            generatePdf(filtered, `Finova - Category: "${selectedCat}"`, fileName);
+        };
+
+        // ────────────────────────────────────────────────────────────────────────
 
         document.getElementById('transaction-form').onsubmit = (e) => {
             e.preventDefault();
@@ -1079,6 +1260,7 @@
             setNow();
             refreshUI(true);
             updateCategoryDatalists();
+            populatePdfCategorySelect();
             showNotif("Entry Saved!");
         };
 
@@ -1130,6 +1312,7 @@
         document.getElementById('confirm-clear').onclick = () => { transactions = [];
             confirmModal.classList.add('hidden');
             refreshUI();
+            populatePdfCategorySelect();
             showNotif("History Cleared!"); };
 
         const profileTrigger = document.getElementById('profile-trigger');
